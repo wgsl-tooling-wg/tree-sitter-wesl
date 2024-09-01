@@ -50,8 +50,13 @@
   },
   "tree-sitter": [
     {
-      "scope": "source.wgsl",
-      "injection-regex": "^wgsl$"
+      "scope": "source.wesl",
+      "file-types": [
+        "wgsl",
+        "wesl"
+      ],
+      "injection-regex": "^w[ge]sl$",
+      "highlights": "queries/highlights.scm"
     }
   ]
 }

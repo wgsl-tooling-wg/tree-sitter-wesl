@@ -21,8 +21,8 @@ from tree_sitter import Language, Parser
 
 # TODO: Source from spec
 derivative_patterns = {
-    "_comment": "/\\/\\/.*/",
-    "_blankspace": "/[\\u0020\\u0009\\u000a\\u000b\\u000c\\u000d\\u0085\\u200e\\u200f\\u2028\\u2029]/u"
+    "comment": "/\\/\\/.*/",
+    "blankspace": "/[\\u0020\\u0009\\u000a\\u000b\\u000c\\u000d\\u0085\\u200e\\u200f\\u2028\\u2029]/u"
 }
 
 class Options():
@@ -435,7 +435,7 @@ def grammar_from_rule(key, value):
         if production["type"] in ["token", "pattern"]:
             return production["value"]
         elif production["type"] == "symbol":
-            return f"$.{production['value']}"
+            return f"$.{production["value"]}"
         elif production["type"] == "sequence":
             return (
                 "seq("
@@ -940,6 +940,57 @@ def npm_package_version(options, pkg, dev=False):
         else:
             raise Exception(f"missing package `{pkg}` in the package.json file")
 
+
+def rename_rule(rules, old_name, new_name):
+    def rename_refs(production):
+        if production["type"] == "symbol" and production["value"] == old_name:
+            production["value"] = new_name
+        elif production["type"] in ["sequence", "choice", "match_0_1", "match_1_n", "match_0_n"]:
+            for member in production["value"]:
+                rename_refs(member)
+    if old_name in rules:
+        rules[new_name] = rules[old_name]
+        del rules[old_name]
+    for rule in rules.values():
+        rename_refs(rule)
+
+def make_rules_practical(rules):
+    """
+    Change parsed rules from the spec to make them more suitable for a tree-sitter parser.
+    """
+    visible_rules = [
+        "_block_comment",
+        "_template_args_start",
+        "_template_args_end",
+        "_less_than",
+        "_less_than_equal",
+        "_shift_left",
+        "_shift_left_assign",
+        "_greater_than",
+        "_greater_than_equal",
+        "_shift_right",
+        "_shift_right_assign",
+    ]
+    hidden_rules = [
+        "template_elaborated_ident",
+        "ident_pattern_token",
+        "decimal_float_literal",
+        "hex_float_literal",
+    ]
+
+    # change visibility of some rules
+    for old_name in visible_rules:
+        new_name = old_name[1:]
+        rename_rule(rules, old_name, new_name)
+    for old_name in hidden_rules:
+        new_name = "_" + old_name
+        rename_rule(rules, old_name, new_name)
+
+    # flatten expressions and add precedence
+    # TODO
+
+    return rules
+
 def flow_extract(options, scan_result):
     """
     Write the tree-sitter grammar definition for WGSL
@@ -964,7 +1015,7 @@ def flow_extract(options, scan_result):
                     input_bs_is_fresh = False
 
     if input_bs_is_fresh:
-        rules = scan_result['rule']
+        rules = make_rules_practical(scan_result['rule'])
 
         grammar_source = ""
 
@@ -972,24 +1023,24 @@ def flow_extract(options, scan_result):
     name: 'wesl',
 
     externals: $ => [
-        $._block_comment,
+        $.block_comment,
         $._disambiguate_template,
-        $._template_args_start,
-        $._template_args_end,
-        $._less_than,
-        $._less_than_equal,
-        $._shift_left,
-        $._shift_left_assign,
-        $._greater_than,
-        $._greater_than_equal,
-        $._shift_right,
-        $._shift_right_assign,
+        $.template_args_start,
+        $.template_args_end,
+        $.less_than,
+        $.less_than_equal,
+        $.shift_left,
+        $.shift_left_assign,
+        $.greater_than,
+        $.greater_than_equal,
+        $.shift_right,
+        $.shift_right_assign,
         $._error_sentinel,
     ],
 
     extras: $ => [
-        $._comment,
-        $._block_comment,
+        $.comment,
+        $.block_comment,
         $._blankspace,
     ],
 
@@ -1000,7 +1051,7 @@ def flow_extract(options, scan_result):
     // WGSL has no parsing conflicts.
     conflicts: $ => [],
 
-    word: $ => $.ident_pattern_token,
+    word: $ => $._ident_pattern_token,
 
     rules: {"""
 
@@ -1053,7 +1104,7 @@ def flow_extract(options, scan_result):
 
 
         for key, value in rules.items():
-            if key.startswith("_") and key != "_comment" and key != "_blankspace" and key not in rule_skip:
+            if key.startswith("_") and key not in rule_skip:
                 grammar_source += grammar_from_rule(key, value) + ",\n"
                 rule_skip.add(key)
 
@@ -1061,7 +1112,7 @@ def flow_extract(options, scan_result):
         # Extract ident
 
 
-        grammar_source += grammar_from_rule( "ident", rules["ident"]) + ",\n"
+        grammar_source += grammar_from_rule("ident", rules["ident"]) + ",\n"
         rule_skip.add("ident")
 
 
@@ -1069,9 +1120,9 @@ def flow_extract(options, scan_result):
 
 
         grammar_source += grammar_from_rule(
-            "_comment", {'type': 'pattern',
-                               'value': derivative_patterns["_comment"]}) + ",\n"
-        rule_skip.add("_comment")
+            "comment", {'type': 'pattern',
+                               'value': derivative_patterns["comment"]}) + ",\n"
+        rule_skip.add("comment")
 
 
         # Extract space
@@ -1079,7 +1130,7 @@ def flow_extract(options, scan_result):
 
         grammar_source += grammar_from_rule(
             "_blankspace", {'type': 'pattern',
-                               'value': derivative_patterns["_blankspace"]})
+                               'value': derivative_patterns["blankspace"]})
         rule_skip.add("_blankspace")
 
 
