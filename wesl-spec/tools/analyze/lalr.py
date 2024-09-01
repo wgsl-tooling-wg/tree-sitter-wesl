@@ -37,10 +37,6 @@ Analyze a grammar, given in Treesitter JSON form
 
 import argparse
 import inspect
-import json
-import os
-import re
-import subprocess
 import sys
 
 from Grammar import Grammar, PrintOption

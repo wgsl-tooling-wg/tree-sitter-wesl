@@ -6,8 +6,8 @@ all: index.html nfkc validate test diagrams
 validate: lalr tspath_tests unit_tests validate-examples
 
 clean:
-	rm -f index.html index.bs.pre index.pre.html wgsl.recursive.bs.include.pre grammar/grammar.js wgsl.lalr.txt
-	rm -rf grammar/build
+	rm -f index.html index.bs.pre index.pre.html wgsl.recursive.bs.include.pre ../grammar.js wgsl.lalr.txt
+	rm -rf ../build
 
 
 # Generate spec HTML from Bikeshed source.
@@ -26,15 +26,15 @@ diagrams: $(MERMAID_OUTPUTS)
 img/%.mmd.svg: diagrams/%.mmd ../tools/invoke-mermaid.sh ../tools/mermaid.json
 	bash ../tools/invoke-mermaid.sh -i $< -o $@
 
-TREESITTER_GRAMMAR_INPUT := grammar/grammar.js
-TREESITTER_PARSER := grammar/build/wgsl.so
+TREESITTER_GRAMMAR_INPUT := ../grammar.js
+TREESITTER_PARSER := ../build/wgsl.so
 # Extract WGSL grammar from the spec
 $(TREESITTER_GRAMMAR_INPUT): index.bs ./tools/scanner.cc ./tools/extract-grammar.py
-	python3 ./tools/extract-grammar.py --spec index.bs --scanner ./tools/scanner.cc --tree-sitter-dir grammar --flow x
+	python3 ./tools/extract-grammar.py --spec index.bs --scanner ./tools/scanner.cc --tree-sitter-dir .. --flow x
 
 # Build a Treesitter parser to validate grammar extract and later examples in spec
 $(TREESITTER_PARSER): $(TREESITTER_GRAMMAR_INPUT)
-	python3 ./tools/extract-grammar.py --spec index.bs --scanner ./tools/scanner.cc --tree-sitter-dir grammar --flow b
+	python3 ./tools/extract-grammar.py --spec index.bs --scanner ./tools/scanner.cc --tree-sitter-dir .. --flow b
 
 .PHONY: validate-examples
 # Use Treesitter to parse many code examples in the spec.
@@ -51,7 +51,7 @@ unit_tests: $(TREESITTER_PARSER) ./tools/wgsl_unit_tests.py
 	python3 ./tools/wgsl_unit_tests.py --parser $(TREESITTER_PARSER)
 
 # The grammar in JSON form, emitted by Treesitter.
-WGSL_GRAMMAR=grammar/src/grammar.json
+WGSL_GRAMMAR=../src/grammar.json
 $(WGSL_GRAMMAR) : $(TREESITTER_PARSER)
 
 .PHONY: nfkc
@@ -79,27 +79,27 @@ simple: wgsl.simple.txt
 
 # A human-readable LALR(1) parse table, in an ad hoc format.
 wgsl.lalr.txt : $(ANALYZER) $(WGSL_GRAMMAR)
-	python3 $(ANALYZE_SCRIPT) -lalr grammar/src/grammar.json >$@
+	python3 $(ANALYZE_SCRIPT) -lalr ../src/grammar.json >$@
 
 wgsl.simple.txt : $(ANALYZER) $(WGSL_GRAMMAR)
-	python3 $(ANALYZE_SCRIPT) -simple grammar/src/grammar.json >$@
+	python3 $(ANALYZE_SCRIPT) -simple ../src/grammar.json >$@
 
 # Print a simple (uncanonicalized form) of the grammar
 .PHONY: recursive
 recursive : $(ANALYZER) $(WGSL_GRAMMAR)
-	@python3 $(ANALYZE_SCRIPT) -recursive grammar/src/grammar.json
+	@python3 $(ANALYZE_SCRIPT) -recursive ../src/grammar.json
 .PHONY: recursive_bs
 recursive_bs : $(ANALYZER) $(WGSL_GRAMMAR)
-	@python3 $(ANALYZE_SCRIPT) -recursive -bs grammar/src/grammar.json
+	@python3 $(ANALYZE_SCRIPT) -recursive -bs ../src/grammar.json
 
 wgsl.recursive.bs.include : $(ANALYZER) $(WGSL_GRAMMAR)
-	python3 $(ANALYZE_SCRIPT) -recursive -bs grammar/src/grammar.json >$@.pre
+	python3 $(ANALYZE_SCRIPT) -recursive -bs ../src/grammar.json >$@.pre
 	bash ../tools/copy-if-different.sh $@.pre $@
 
 # Print a simple (uncanonicalized form) of the grammar and check LL(1)
 .PHONY: recursive_ll
 recursive_ll : $(ANALYZER) $(WGSL_GRAMMAR)
-	@python3 $(ANALYZE_SCRIPT) -recursive -ll grammar/src/grammar.json
+	@python3 $(ANALYZE_SCRIPT) -recursive -ll ../src/grammar.json
 
 ## The following targets are used when developing the grammar analyzer
 
@@ -113,17 +113,17 @@ analyze_test: $(ANALYZER)
 # Profile LALR analysis
 .PHONY: profile
 profile wgsl.lalr.profile : $(ANALYZER) $(WGSL_GRAMMAR)
-	python3 -m cProfile -o wgsl.lalr.profile $(ANALYZE_SCRIPT) -lalr grammar/src/grammar.json
+	python3 -m cProfile -o wgsl.lalr.profile $(ANALYZE_SCRIPT) -lalr ../src/grammar.json
 
 # Compute LR(1) item sets
 .PHONY: lr
 lr: $(ANALYZER) $(WGSL_GRAMMAR)
-	python3 $(ANALYZE_SCRIPT) -lr grammar/src/grammar.json
+	python3 $(ANALYZE_SCRIPT) -lr ../src/grammar.json
 
 # Compute LL(1) parse table
 .PHONY: ll
 ll: $(ANALYZER) $(WGSL_GRAMMAR)
-	python3 $(ANALYZE_SCRIPT) -ll grammar/src/grammar.json
+	python3 $(ANALYZE_SCRIPT) -ll ../src/grammar.json
 
 
 # Produce LALR(1) parse tables for small sample languages

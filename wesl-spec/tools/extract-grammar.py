@@ -29,7 +29,7 @@ class Options():
     """
     A class to store various options including file paths and verbosity.
     """
-    def __init__(self,bs_filename, tree_sitter_dir, scanner_cc_filename, syntax_filename, syntax_dir):
+    def __init__(self, bs_filename, tree_sitter_dir, scanner_cc_filename, syntax_filename, syntax_dir):
         self.script = 'extract-grammar.py'
         self.bs_filename = bs_filename
         self.grammar_dir = tree_sitter_dir
@@ -52,7 +52,7 @@ class Options():
         parts.append("syntax_dir = {}".format(self.syntax_dir))
         return "Options({})".format(",".join(parts))
 
-def newer_than(first,second,second_ext=""):
+def newer_than(first, second, second_ext=""):
     """
     Returns true if file 'first' is newer than 'second',
     or if 'second' does not exist
@@ -128,31 +128,26 @@ class Scanner:
     """ Returns True if this scanner should be used starting at the i'th line."""
     @staticmethod
     def begin(lines, i):
-        line = lines[i].rstrip()
         return False
 
     """ Returns True if this scanner stop being used at the i'th line."""
     @staticmethod
     def end(lines, i):
-        line = lines[i].rstrip()
         return False
 
     """ Returns True if this scanner should start trying to parse the text starting after the i'th line."""
     @staticmethod
     def record(lines, i):
-        line = lines[i].rstrip()
         return False
 
     """ Returns True if this scanner stop start trying to parse the text starting after the i'th line."""
     @staticmethod
     def skip(lines, i):
-        line = lines[i].rstrip()
         return False
 
     """ Returns True if this scanner should try to parse this line. Only called when "recording" """
     @staticmethod
     def valid(lines, i):
-        line = lines[i].rstrip()
         return False
 
     """ Returns a triple resulting from parsing the line.
@@ -167,7 +162,6 @@ class Scanner:
     """
     @staticmethod
     def parse(lines, i):
-        line = lines[i].rstrip()
         return False
 
 
@@ -192,12 +186,10 @@ class scanner_rule(Scanner):
 
     @staticmethod
     def record(lines, i):
-        line = lines[i].rstrip()
         return (True, 0)
 
     @staticmethod
     def skip(lines, i):
-        line = lines[i].rstrip()
         return (False, 0)
 
     @staticmethod
@@ -270,7 +262,6 @@ class scanner_example(Scanner):
 
     @staticmethod
     def valid(lines, i):
-        line = lines[i].split("//")[0].rstrip()
         return True
 
     @staticmethod
@@ -303,22 +294,18 @@ class scanner_token(Scanner):
 
     @staticmethod
     def end(lines, i):
-        line = lines[i].split("//")[0].rstrip()
         return (True, 0) # Token definitions always start and end at the same line
 
     @staticmethod
     def record(lines, i):
-        line = lines[i].split("//")[0].rstrip()
         return (True, 0)
 
     @staticmethod
     def skip(lines, i):
-        line = lines[i].split("//")[0].rstrip()
         return (False, 0)
 
     @staticmethod
     def valid(lines, i):
-        line = lines[i].split("//")[0].rstrip()
         return True
 
     @staticmethod
@@ -984,7 +971,7 @@ def flow_extract(options, scan_result):
         grammar_source = ""
 
         grammar_source += """module.exports = grammar({
-    name: 'wgsl',
+    name: 'wesl',
 
     externals: $ => [
         $._block_comment,
@@ -1010,7 +997,6 @@ def flow_extract(options, scan_result):
 
     inline: $ => [
         $.global_decl,
-        $._reserved,
     ],
 
     // WGSL has no parsing conflicts.
@@ -1116,15 +1102,16 @@ def flow_extract(options, scan_result):
 // [1] http://www.w3.org/Consortium/Legal/copyright-software
 
 // **** This file is auto-generated. Do not edit. ****
+// generated: $DATE
 
 """.lstrip()
 
     if input_bs_is_fresh:
-        print("{}: ...Creating tree-sitter parser".format(options.script,options.grammar_filename))
+        print("{}: ...Creating tree-sitter parser".format(options.script))
         with open(options.grammar_filename, "w") as grammar_file:
             headerTemplate = Template(HEADER)
             grammar_file.write(headerTemplate.substitute(
-                YEAR=date.today().year) + grammar_source + "\n")
+                YEAR=date.today().year, DATE=date.today()) + grammar_source + "\n")
             grammar_file.close()
 
     if input_bs_is_fresh:
@@ -1145,22 +1132,6 @@ def flow_build(options):
         print("missing grammar file: {}")
         return False
 
-    # External scanner for nested block comments
-    # For the API, see https://tree-sitter.github.io/tree-sitter/creating-parsers#external-scanners
-    # See: https://github.com/tree-sitter/tree-sitter-rust/blob/master/src/scanner.c
-
-    os.makedirs(os.path.join(options.grammar_dir, "src"), exist_ok=True)
-
-    # Remove the old custom scanner, if it exists.
-    scanner_c_staging = os.path.join(options.grammar_dir, "src", "scanner.c")
-    if os.path.exists(scanner_c_staging):
-        os.remove(scanner_c_staging)
-    # Copy the new scanner into place, if newer
-    scanner_cc_staging = os.path.join(options.grammar_dir, "src", "scanner.cc")
-    if newer_than(options.scanner_cc_filename, scanner_cc_staging):
-        shutil.copyfile(options.scanner_cc_filename, scanner_cc_staging)
-
-
     # Use "npm install" to create the tree-sitter CLI that has WGSL
     # support.  But "npm install" fetches data over the network.
     # That can be flaky, so only invoke it when needed.
@@ -1171,60 +1142,13 @@ def flow_build(options):
         subprocess.run(["npm", "install"], cwd=options.grammar_dir, check=True)
     subprocess.run(["npx", "tree-sitter-cli@" + npm_package_version(options, "tree-sitter-cli", dev=True), "generate"],
                    cwd=options.grammar_dir, check=True)
+    subprocess.run(["npx", "tree-sitter-cli@" + npm_package_version(options, "tree-sitter-cli", dev=True), "build"],
+                   cwd=options.grammar_dir, check=True)
     # Following are commented for future reference to expose playground
     # Remove "--docker" if local environment matches with the container
     # subprocess.run(["npx", "tree-sitter-cli@" + value_from_dotenv("NPM_TREE_SITTER_CLI_VERSION"), "build-wasm", "--docker"],
     #                cwd=options.grammar_dir, check=True)
 
-    def build_library(output_path, input_files):
-        # The py-tree-sitter build_library method with C++17 flags
-        """
-        Build a dynamic library at the given path, based on the parser
-        repositories at the given paths.
-
-        Returns `True` if the dynamic library was compiled and `False` if
-        the library already existed and was modified more recently than
-        any of the source files.
-        """
-
-        cpp = False
-        source_paths = []
-        for input_file in input_files:
-            source_paths.append(input_file)
-            if input_file.endswith(".cc"):
-                cpp = True
-
-        compiler = new_compiler()
-        if isinstance(compiler, UnixCCompiler):
-            compiler.set_executables(compiler_cxx="c++")
-
-        with TemporaryDirectory(suffix="tree_sitter_language") as out_dir:
-            object_paths = []
-            for source_path in source_paths:
-                flags = ["-fPIC"]
-                if source_path.endswith(".c"):
-                    flags.append("-std=c99")
-                else:
-                    flags.append("-std=c++17")
-                object_paths.append(
-                    compiler.compile(
-                        [source_path],
-                        output_dir=out_dir,
-                        include_dirs=[os.path.dirname(source_path)],
-                        extra_preargs=flags,
-                    )[0]
-                )
-            compiler.link_shared_object(
-                object_paths,
-                output_path,
-                target_lang="c++" if cpp else "c",
-            )
-            
-    if newer_than(scanner_cc_staging, options.wgsl_shared_lib) or newer_than(options.grammar_filename,options.wgsl_shared_lib):
-        print("{}: ...Building custom scanner: {}".format(options.script,options.wgsl_shared_lib))
-        build_library(options.wgsl_shared_lib,
-                      [scanner_cc_staging,
-                       os.path.join(options.grammar_dir,"src","parser.c")])
     return True
 
 def flow_examples(options,scan_result):
@@ -1348,6 +1272,10 @@ def main():
 
     if not os.path.exists(options.syntax_dir):
         print("ERROR: Syntax directory does not exist: {}".format(options.syntax_dir))
+        return 1
+
+    if not os.path.isfile(os.path.join(options.grammar_dir, "package.json")):
+        print("ERROR: Missing package.json file in directory {}".format(options.grammar_dir))
         return 1
 
     scan_result = None
