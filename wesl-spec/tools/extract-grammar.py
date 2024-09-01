@@ -29,11 +29,10 @@ class Options():
     """
     A class to store various options including file paths and verbosity.
     """
-    def __init__(self, bs_filename, tree_sitter_dir, scanner_cc_filename, syntax_filename, syntax_dir):
+    def __init__(self, bs_filename, tree_sitter_dir, syntax_filename, syntax_dir):
         self.script = 'extract-grammar.py'
         self.bs_filename = bs_filename
         self.grammar_dir = tree_sitter_dir
-        self.scanner_cc_filename = scanner_cc_filename
         self.wgsl_shared_lib = os.path.join(self.grammar_dir,"build","wgsl.so")
         self.grammar_filename = os.path.join(self.grammar_dir,"grammar.js")
         self.syntax_filename = syntax_filename
@@ -46,7 +45,6 @@ class Options():
         parts.append("bs_filename = {}".format(self.bs_filename))
         parts.append("grammar_dir = {}".format(self.grammar_dir))
         parts.append("grammar_filename = {}".format(self.grammar_filename))
-        parts.append("scanner_cc_filename = {}".format(self.scanner_cc_filename))
         parts.append("wgsl_shared_lib = {}".format(self.wgsl_shared_lib))
         parts.append("syntax_filename = {}".format(self.syntax_filename))
         parts.append("syntax_dir = {}".format(self.syntax_dir))
@@ -1124,7 +1122,7 @@ def flow_extract(options, scan_result):
 
 def flow_build(options):
     """
-    Build the shared library for the custom tree-sitter scanner.
+    Build the tree-sitter parser.
     """
 
     print("{}: Build...".format(options.script))
@@ -1247,10 +1245,6 @@ def main():
                            action='store',
                            help="Bikeshed source file for the WGSL spec",
                            default="index.bs")
-    argparser.add_argument("--scanner",
-                           action='store',
-                           help="Source file for the tree-sitter custom scanner",
-                           default="scanner.cc")
     argparser.add_argument("--syntax",
                            action='store',
                            help="Source file for the WGSL syntax",
@@ -1265,7 +1259,7 @@ def main():
         print(FLOW_HELP)
         return 0
 
-    options = Options(args.spec,args.tree_sitter_dir,args.scanner, args.syntax, args.syntax_dir)
+    options = Options(args.spec, args.tree_sitter_dir, args.syntax, args.syntax_dir)
     options.verbose = args.verbose
     if args.verbose:
         print(options)

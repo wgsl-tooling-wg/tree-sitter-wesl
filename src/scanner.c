@@ -988,7 +988,7 @@ void scanner_deserialize(Scanner* scanner, const char* buffer, unsigned length) 
 
 // Called once when language is set on a parser.
 // Allocates memory for storing scanner state.
-void* tree_sitter_wgsl_external_scanner_create() {
+void* tree_sitter_wesl_external_scanner_create() {
     Scanner* scanner = malloc(sizeof(Scanner));
     memset(scanner, 0, sizeof(Scanner));
     return scanner;
@@ -996,14 +996,14 @@ void* tree_sitter_wgsl_external_scanner_create() {
 
 // Called once parser is deleted or different language set.
 // Frees memory storing scanner state.
-void tree_sitter_wgsl_external_scanner_destroy(void* const payload) {
+void tree_sitter_wesl_external_scanner_destroy(void* const payload) {
     Scanner* scanner = (Scanner*)payload;
     free(payload);
 }
 
 // Called whenever this scanner recognizes a token.
 // Serializes scanner state into buffer.
-unsigned tree_sitter_wgsl_external_scanner_serialize(void* const payload,
+unsigned tree_sitter_wesl_external_scanner_serialize(void* const payload,
                                                      char* const buffer) {
     Scanner* scanner = (Scanner*)payload;
     return scanner_serialize(scanner, buffer);
@@ -1011,7 +1011,7 @@ unsigned tree_sitter_wgsl_external_scanner_serialize(void* const payload,
 
 // Called when handling edits and ambiguities.
 // Deserializes scanner state from buffer.
-void tree_sitter_wgsl_external_scanner_deserialize(void* const payload,
+void tree_sitter_wesl_external_scanner_deserialize(void* const payload,
                                                    const char* const buffer,
                                                    unsigned const length) {
     Scanner* scanner = (Scanner*)payload;
@@ -1019,7 +1019,7 @@ void tree_sitter_wgsl_external_scanner_deserialize(void* const payload,
 }
 
 // Scans for tokens.
-bool tree_sitter_wgsl_external_scanner_scan(void* const payload,
+bool tree_sitter_wesl_external_scanner_scan(void* const payload,
                                             TSLexer* const lexer,
                                             const bool* const valid_symbols) {
     Scanner* scanner = (Scanner*)payload;
