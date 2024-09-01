@@ -1,0 +1,28 @@
+{
+  "name": "tree-sitter-wesl",
+  "version": "1.0.0",
+  "description": "WESL (WGSL Extended) grammar for tree-sitter",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://wgsl-tooling-wg/tree-sitter-wesl"
+  },
+  "keywords": [
+    "incremental",
+    "parsing",
+    "tree-sitter",
+    "wgsl",
+    "wesl"
+  ],
+  "author": "Mathis Brossier <mathis.brossier@gmail.com>",
+  "license": "MIT",
+  "dependencies": {
+    "nan": "^2.20.0"
+  },
+  "devDependencies": {
+    "tree-sitter-cli": "^0.23.0"
+  }
+}
