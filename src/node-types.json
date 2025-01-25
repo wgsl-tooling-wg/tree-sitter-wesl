@@ -1155,7 +1155,7 @@
           "named": true
         },
         {
-          "type": "template_list",
+          "type": "type_specifier",
           "named": true
         }
       ]
@@ -1466,6 +1466,29 @@
         },
         {
           "type": "if_clause",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "import",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": true,
+      "required": false,
+      "types": [
+        {
+          "type": "attribute",
+          "named": true
+        },
+        {
+          "type": "ident",
+          "named": true
+        },
+        {
+          "type": "import",
           "named": true
         }
       ]
@@ -2312,6 +2335,10 @@
           "named": true
         },
         {
+          "type": "import",
+          "named": true
+        },
+        {
           "type": "struct_decl",
           "named": true
         },
@@ -2708,6 +2735,10 @@
     "named": false
   },
   {
+    "type": "::",
+    "named": false
+  },
+  {
     "type": ";",
     "named": false
   },
@@ -2749,6 +2780,10 @@
   },
   {
     "type": "align",
+    "named": false
+  },
+  {
+    "type": "as",
     "named": false
   },
   {
@@ -2857,6 +2892,10 @@
   },
   {
     "type": "if",
+    "named": false
+  },
+  {
+    "type": "import",
     "named": false
   },
   {
