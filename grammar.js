@@ -37,17 +37,13 @@ module.exports = grammar({
         $._blankspace,
     ],
 
-    inline: $ => [
-        $.global_decl,
-    ],
-
     // WGSL has no parsing conflicts.
     conflicts: $ => [],
 
     word: $ => $._ident_pattern_token,
 
     rules: {
-        translation_unit: $ => seq(repeat($.import), repeat($.global_directive), repeat($.global_decl)),
+        translation_unit: $ => seq(repeat($.import), repeat($._decorated_global_directive), repeat($._decorated_global_decl)),
 
         // imports
         import: $ => seq(repeat($.attribute), 'import', $._import_path, ';'),
@@ -56,6 +52,7 @@ module.exports = grammar({
         _import_item: $ => seq($.ident, optional(seq('as', $.ident))),
         _import_collection: $ => seq('{', repeat1($.import), '}'),
 
+        _decorated_global_decl: $ => seq(repeat($.attribute), $.global_decl),
         global_decl: $ => choice(';', seq($.global_variable_decl, ';'), seq($.global_value_decl, ';'), seq($.type_alias_decl, ';'), $.struct_decl, $.function_decl, seq($.const_assert_statement, ';')),
 
         // literals
@@ -75,6 +72,7 @@ module.exports = grammar({
         _ident_pattern_token: $ => /([_\p{XID_Start}][\p{XID_Continue}]+)|([\p{XID_Start}])/u,
 
         // directives
+        _decorated_global_directive: $ => seq(repeat($.attribute), $.global_directive),
         global_directive: $ => choice($.diagnostic_directive, $.enable_directive, $.requires_directive),
         diagnostic_directive: $ => seq('diagnostic', $.diagnostic_control, ';'),
         diagnostic_name_token: $ => $._ident_pattern_token,
@@ -94,7 +92,7 @@ module.exports = grammar({
         template_arg_expression: $ => $._expression,
 
         // attributes
-        attribute: $ => choice(seq('@', $._ident_pattern_token, optional($.argument_expression_list)), $.align_attr, $.binding_attr, $.blend_src_attr, $.builtin_attr, $.const_attr, $.diagnostic_attr, $.group_attr, $.id_attr, $.interpolate_attr, $.invariant_attr, $.location_attr, $.must_use_attr, $.size_attr, $.workgroup_size_attr, $.vertex_attr, $.fragment_attr, $.compute_attr),
+        attribute: $ => choice($.custom_attr, $.align_attr, $.binding_attr, $.blend_src_attr, $.builtin_attr, $.const_attr, $.diagnostic_attr, $.group_attr, $.id_attr, $.interpolate_attr, $.invariant_attr, $.location_attr, $.must_use_attr, $.size_attr, $.workgroup_size_attr, $.vertex_attr, $.fragment_attr, $.compute_attr),
         align_attr: $ => seq('@', 'align', '(', $._expression, optional(','), ')'),
         binding_attr: $ => seq('@', 'binding', '(', $._expression, optional(','), ')'),
         blend_src_attr: $ => seq('@', 'blend_src', '(', $._expression, optional(','), ')'),
@@ -115,6 +113,7 @@ module.exports = grammar({
         vertex_attr: $ => seq('@', 'vertex'),
         fragment_attr: $ => seq('@', 'fragment'),
         compute_attr: $ => seq('@', 'compute'),
+        custom_attr: $ => prec.right(seq('@', $._ident_pattern_token, optional($.argument_expression_list))), // precedence: a parenthesis following an attribute is always part of the attribute.
 
         // structs
         struct_decl: $ => seq('struct', $.ident, $.struct_body_decl),
@@ -126,8 +125,8 @@ module.exports = grammar({
         type_specifier: $ => $._template_elaborated_ident,
 
         // variables and values
-        global_variable_decl: $ => seq(repeat($.attribute), $.variable_decl, optional(seq('=', $._expression))),
-        global_value_decl: $ => choice(seq('const', $._optionally_typed_ident, '=', $._expression), seq(repeat($.attribute), 'override', $._optionally_typed_ident, optional(seq('=', $._expression)))),
+        global_variable_decl: $ => seq($.variable_decl, optional(seq('=', $._expression))),
+        global_value_decl: $ => choice(seq('const', $._optionally_typed_ident, '=', $._expression), seq('override', $._optionally_typed_ident, optional(seq('=', $._expression)))),
         variable_or_value_statement: $ => choice($.variable_decl, seq($.variable_decl, '=', $._expression), seq('let', $._optionally_typed_ident, '=', $._expression), seq('const', $._optionally_typed_ident, '=', $._expression)),
         variable_decl: $ => seq('var', $._disambiguate_template, optional($.template_list), $._optionally_typed_ident),
 
@@ -165,6 +164,7 @@ module.exports = grammar({
         call_expression: $ => prec.left(11, $._call_phrase),
         indexing_expression: $ => prec.left(11, seq($._expression, '[', $._expression, ']')),
         named_component_expression: $ => prec.left(11, seq($._expression, '.', choice($.member_ident, $.swizzle_name))),
+        swizzle_name: $ => choice(/[rgba]/, /[rgba][rgba]/, /[rgba][rgba][rgba]/, /[rgba][rgba][rgba][rgba]/, /[xyzw]/, /[xyzw][xyzw]/, /[xyzw][xyzw][xyzw]/, /[xyzw][xyzw][xyzw][xyzw]/),
         paren_expression: $ => prec.left(12, seq('(', $._expression, ')')),
 
         binary_expression: $ => choice(
@@ -190,20 +190,26 @@ module.exports = grammar({
         ),
 
         // statements
-        compound_statement: $ => seq(repeat($.attribute), '{', repeat($.statement), '}'),
+        _decorated_statement: $ => seq(repeat($.attribute), $.statement),
+        statement: $ => choice(';', seq($.return_statement, ';'), $.if_statement, $.switch_statement, $.loop_statement, $.for_statement, $.while_statement, seq($.func_call_statement, ';'), seq($.variable_or_value_statement, ';'), seq($.break_statement, ';'), seq($.continue_statement, ';'), seq('discard', ';'), seq($.variable_updating_statement, ';'), $.compound_statement, seq($.const_assert_statement, ';')),
+        compound_statement: $ => seq('{', repeat($._decorated_statement), '}'),
         assignment_statement: $ => choice(seq($._expression, choice('=', $.compound_assignment_operator), $._expression), seq('_', '=', $._expression)),
         compound_assignment_operator: $ => choice('+=', '-=', '*=', '/=', '%=', '&=', '|=', '^=', $.shift_right_assign, $.shift_left_assign),
         increment_statement: $ => seq($._expression, '++'),
         decrement_statement: $ => seq($._expression, '--'),
+        return_statement: $ => seq('return', optional($._expression)),
+        func_call_statement: $ => $._call_phrase,
+        const_assert_statement: $ => seq('const_assert', $._expression),
+        variable_updating_statement: $ => choice($.assignment_statement, $.increment_statement, $.decrement_statement),
 
         // if statement
-        if_statement: $ => seq(repeat($.attribute), $.if_clause, repeat($.else_if_clause), optional($.else_clause)),
+        if_statement: $ => seq($.if_clause, repeat($.else_if_clause), optional($.else_clause)),
         if_clause: $ => seq('if', $._expression, $.compound_statement),
         else_if_clause: $ => seq('else', 'if', $._expression, $.compound_statement),
         else_clause: $ => seq('else', $.compound_statement),
 
         // switch statement
-        switch_statement: $ => seq(repeat($.attribute), 'switch', $._expression, $.switch_body),
+        switch_statement: $ => seq('switch', $._expression, $.switch_body),
         switch_body: $ => seq(repeat($.attribute), '{', repeat1($.switch_clause), '}'),
         switch_clause: $ => choice($.case_clause, $.default_alone_clause),
         case_clause: $ => seq('case', $.case_selectors, optional(':'), $.compound_statement),
@@ -211,35 +217,24 @@ module.exports = grammar({
         case_selectors: $ => seq($.case_selector, repeat(seq(',', $.case_selector)), optional(',')),
         case_selector: $ => choice('default', $._expression),
 
-        loop_statement: $ => seq(repeat($.attribute), 'loop', repeat($.attribute), '{', repeat($.statement), optional($.continuing_statement), '}'),
-
-        // for statement
-        for_statement: $ => seq(repeat($.attribute), 'for', '(', $.for_header, ')', $.compound_statement),
+        // control flow statements
+        for_statement: $ => seq('for', '(', $.for_header, ')', $.compound_statement),
         for_header: $ => seq(optional($.for_init), ';', optional($._expression), ';', optional($.for_update)),
         for_init: $ => choice($.variable_or_value_statement, $.variable_updating_statement, $.func_call_statement),
         for_update: $ => choice($.variable_updating_statement, $.func_call_statement),
-
-        while_statement: $ => seq(repeat($.attribute), 'while', $._expression, $.compound_statement),
+        loop_statement: $ => seq('loop', repeat($.attribute), '{', repeat($._decorated_statement), optional($.continuing_statement), '}'),
+        while_statement: $ => seq('while', $._expression, $.compound_statement),
         break_statement: $ => 'break',
         break_if_statement: $ => seq('break', 'if', $._expression, ';'),
         continue_statement: $ => 'continue',
         continuing_statement: $ => seq('continuing', $.continuing_compound_statement),
-        continuing_compound_statement: $ => seq(repeat($.attribute), '{', repeat($.statement), optional($.break_if_statement), '}'),
-
-        return_statement: $ => seq('return', optional($._expression)),
-        func_call_statement: $ => $._call_phrase,
-        const_assert_statement: $ => seq('const_assert', $._expression),
-        statement: $ => choice(';', seq($.return_statement, ';'), $.if_statement, $.switch_statement, $.loop_statement, $.for_statement, $.while_statement, seq($.func_call_statement, ';'), seq($.variable_or_value_statement, ';'), seq($.break_statement, ';'), seq($.continue_statement, ';'), seq('discard', ';'), seq($.variable_updating_statement, ';'), $.compound_statement, seq($.const_assert_statement, ';')),
-
-        variable_updating_statement: $ => choice($.assignment_statement, $.increment_statement, $.decrement_statement),
+        continuing_compound_statement: $ => seq(repeat($.attribute), '{', repeat($._decorated_statement), optional($.break_if_statement), '}'),
 
         // function declaration
-        function_decl: $ => seq(repeat($.attribute), $.function_header, $.compound_statement),
+        function_decl: $ => seq($.function_header, $.compound_statement),
         function_header: $ => seq('fn', $.ident, '(', optional($.param_list), ')', optional(seq('->', repeat($.attribute), $.type_specifier /* in the spec this is template_elaborated_ident but why? */))),
         param_list: $ => seq($.param, repeat(seq(',', $.param)), optional(',')),
         param: $ => seq(repeat($.attribute), $.ident, ':', $.type_specifier),
-
-        swizzle_name: $ => choice(/[rgba]/, /[rgba][rgba]/, /[rgba][rgba][rgba]/, /[rgba][rgba][rgba][rgba]/, /[xyzw]/, /[xyzw][xyzw]/, /[xyzw][xyzw][xyzw]/, /[xyzw][xyzw][xyzw][xyzw]/),
 
         comment: $ => /\/\/.*/,
         _blankspace: $ => /[\u0020\u0009\u000a\u000b\u000c\u000d\u0085\u200e\u200f\u2028\u2029]/u
