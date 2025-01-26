@@ -108,7 +108,7 @@
 
 (identifier) @variable
 
-; Literals
+; literals
 
 (bool_literal) @constant.builtin.boolean
 (int_literal) @constant.numeric.integer
@@ -143,6 +143,9 @@
   "const"
   "fn"
   "struct"
+  "alias"
+  "virtual" ; Bevy / naga_oil extension
+  "override" ; Bevy / naga_oil extension
 ] @keyword
 
 ; expressions
@@ -155,7 +158,11 @@
   "->" ; return
 ] @operator
 
-; Punctuation
+; punctuation
 
 [ "(" ")" "[" "]" "{" "}" ] @punctuation.bracket
 [ "," "." ":" ";" ] @punctuation.delimiter
+
+; preprocessor
+
+[ (preproc_directive) "#import" ] @keyword.directive
