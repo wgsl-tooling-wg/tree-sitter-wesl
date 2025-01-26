@@ -191,7 +191,7 @@ module.exports = grammar({
 
         // statements
         _decorated_statement: $ => seq(repeat($.attribute), $.statement),
-        statement: $ => choice(';', seq($.return_statement, ';'), $.if_statement, $.switch_statement, $.loop_statement, $.for_statement, $.while_statement, seq($.func_call_statement, ';'), seq($.variable_or_value_statement, ';'), seq($.break_statement, ';'), seq($.continue_statement, ';'), seq('discard', ';'), seq($.variable_updating_statement, ';'), $.compound_statement, seq($.const_assert_statement, ';')),
+        statement: $ => choice(';', seq($.return_statement, ';'), $.if_statement, $.switch_statement, $.loop_statement, $.for_statement, $.while_statement, seq($.func_call_statement, ';'), seq($.variable_or_value_statement, ';'), seq($.break_statement, ';'), seq($.continue_statement, ';'), seq('discard', ';'), seq($.variable_updating_statement, ';'), $.compound_statement, seq($.const_assert_statement, ';'), $.continuing_statement, seq($.break_if_statement, ';')),
         compound_statement: $ => seq('{', repeat($._decorated_statement), '}'),
         assignment_statement: $ => choice(seq($._expression, choice('=', $.compound_assignment_operator), $._expression), seq('_', '=', $._expression)),
         compound_assignment_operator: $ => choice('+=', '-=', '*=', '/=', '%=', '&=', '|=', '^=', $.shift_right_assign, $.shift_left_assign),
@@ -222,13 +222,12 @@ module.exports = grammar({
         for_header: $ => seq(optional($.for_init), ';', optional($._expression), ';', optional($.for_update)),
         for_init: $ => choice($.variable_or_value_statement, $.variable_updating_statement, $.func_call_statement),
         for_update: $ => choice($.variable_updating_statement, $.func_call_statement),
-        loop_statement: $ => seq('loop', repeat($.attribute), '{', repeat($._decorated_statement), optional($.continuing_statement), '}'),
+        loop_statement: $ => seq('loop', repeat($.attribute), $.compound_statement),
         while_statement: $ => seq('while', $._expression, $.compound_statement),
         break_statement: $ => 'break',
-        break_if_statement: $ => seq('break', 'if', $._expression, ';'),
+        break_if_statement: $ => seq('break', 'if', $._expression),
         continue_statement: $ => 'continue',
-        continuing_statement: $ => seq('continuing', $.continuing_compound_statement),
-        continuing_compound_statement: $ => seq(repeat($.attribute), '{', repeat($._decorated_statement), optional($.break_if_statement), '}'),
+        continuing_statement: $ => seq('continuing', $.compound_statement),
 
         // function declaration
         function_decl: $ => seq($.function_header, $.compound_statement),
