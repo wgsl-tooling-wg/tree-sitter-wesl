@@ -1,0 +1,38 @@
+{
+  "grammars": [
+    {
+      "name": "wesl",
+      "camelcase": "Wesl",
+      "scope": "source.wesl",
+      "path": ".",
+      "file-types": [
+        "wgsl",
+        "wesl"
+      ],
+      "highlights": "queries/highlights.scm",
+      "injection-regex": "^w[ge]sl$"
+    }
+  ],
+  "metadata": {
+    "version": "1.0.0",
+    "license": "MIT",
+    "description": "WESL (WGSL Extended) grammar for tree-sitter",
+    "authors": [
+      {
+        "name": "Mathis Brossier",
+        "email": "mathis.brossier@gmail.com"
+      }
+    ],
+    "links": {
+      "repository": "https://wgsl-tooling-wg/tree-sitter-wesl"
+    }
+  },
+  "bindings": {
+    "c": true,
+    "go": true,
+    "node": true,
+    "python": true,
+    "rust": true,
+    "swift": true
+  }
+}

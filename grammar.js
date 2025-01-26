@@ -164,7 +164,7 @@ module.exports = grammar({
         ),
 
         // statements
-        _decorated_statement: $ => seq(repeat($.attribute), $._statement),
+        _decorated_statement: $ => choice($.compound_statement, seq(repeat($.attribute), $._statement)),
         _statement: $ => choice(
             ';',
             $.return_statement,
@@ -179,12 +179,12 @@ module.exports = grammar({
             $.continue_statement,
             $.discard_statement,
             $._variable_updating_statement,
-            $.compound_statement,
+            // $.compound_statement, // is moved to _decorated_statement
             $.const_assert_statement,
             $.continuing_statement,
             $.break_if_statement
         ),
-        compound_statement: $ => seq('{', repeat($._decorated_statement), '}'),
+        compound_statement: $ => seq(repeat($.attribute), '{', repeat($._decorated_statement), '}'),
         assignment_statement: $ => choice(
             seq(field('left', $._expression), field('operator', choice('=', $._compound_assignment_operator)), field('right', $._expression), ';'),
             seq(field('left', '_'), field('operator', '='), field('right', $._expression), ';')
@@ -223,7 +223,7 @@ module.exports = grammar({
         for_header: $ => seq(field('init', optional($._for_init)), ';', field('condition', optional($._expression)), ';', field('update', optional($._for_update))),
         _for_init: $ => choice($.variable_or_value_statement, $._variable_updating_statement, $.func_call_statement),
         _for_update: $ => choice($._variable_updating_statement, $.func_call_statement),
-        loop_statement: $ => seq('loop', repeat($.attribute), field('body', $.compound_statement)),
+        loop_statement: $ => seq('loop', field('body', $.compound_statement)),
         while_statement: $ => seq('while', field('condition', $._expression), field('body', $.compound_statement)),
         break_statement: $ => seq('break', ';'),
         break_if_statement: $ => seq('break', 'if', $._expression, ';'),

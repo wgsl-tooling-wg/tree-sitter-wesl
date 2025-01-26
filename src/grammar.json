@@ -1,4 +1,5 @@
 {
+  "$schema": "https://tree-sitter.github.io/tree-sitter/assets/schemas/grammar.schema.json",
   "name": "wesl",
   "word": "identifier",
   "rules": {
@@ -1802,18 +1803,27 @@
       ]
     },
     "_decorated_statement": {
-      "type": "SEQ",
+      "type": "CHOICE",
       "members": [
         {
-          "type": "REPEAT",
-          "content": {
-            "type": "SYMBOL",
-            "name": "attribute"
-          }
+          "type": "SYMBOL",
+          "name": "compound_statement"
         },
         {
-          "type": "SYMBOL",
-          "name": "_statement"
+          "type": "SEQ",
+          "members": [
+            {
+              "type": "REPEAT",
+              "content": {
+                "type": "SYMBOL",
+                "name": "attribute"
+              }
+            },
+            {
+              "type": "SYMBOL",
+              "name": "_statement"
+            }
+          ]
         }
       ]
     },
@@ -1874,10 +1884,6 @@
         },
         {
           "type": "SYMBOL",
-          "name": "compound_statement"
-        },
-        {
-          "type": "SYMBOL",
           "name": "const_assert_statement"
         },
         {
@@ -1893,6 +1899,13 @@
     "compound_statement": {
       "type": "SEQ",
       "members": [
+        {
+          "type": "REPEAT",
+          "content": {
+            "type": "SYMBOL",
+            "name": "attribute"
+          }
+        },
         {
           "type": "STRING",
           "value": "{"
@@ -2632,13 +2645,6 @@
         {
           "type": "STRING",
           "value": "loop"
-        },
-        {
-          "type": "REPEAT",
-          "content": {
-            "type": "SYMBOL",
-            "name": "attribute"
-          }
         },
         {
           "type": "FIELD",
