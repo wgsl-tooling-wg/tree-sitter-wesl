@@ -32,7 +32,7 @@ module.exports = grammar({
     ],
 
     extras: $ => [
-        $.comment,
+        $.line_comment,
         $.block_comment,
         $._blankspace,
     ],
@@ -94,28 +94,29 @@ module.exports = grammar({
         _template_arg_expression: $ => $._expression,
 
         // attributes
-        attribute: $ => choice($.custom_attr, $.align_attr, $.binding_attr, $.blend_src_attr, $.builtin_attr, $.const_attr, $.diagnostic_attr, $.group_attr, $.id_attr, $.interpolate_attr, $.invariant_attr, $.location_attr, $.must_use_attr, $.size_attr, $.workgroup_size_attr, $.vertex_attr, $.fragment_attr, $.compute_attr),
-        align_attr: $ => seq('@', 'align', '(', $._expression, optional(','), ')'),
-        binding_attr: $ => seq('@', 'binding', '(', $._expression, optional(','), ')'),
-        blend_src_attr: $ => seq('@', 'blend_src', '(', $._expression, optional(','), ')'),
-        builtin_attr: $ => seq('@', 'builtin', '(', $._builtin_value_name, optional(','), ')'),
-        _builtin_value_name: $ => $._ident_pattern_token,
-        const_attr: $ => seq('@', 'const'),
-        diagnostic_attr: $ => seq('@', 'diagnostic', $._diagnostic_control),
-        group_attr: $ => seq('@', 'group', '(', $._expression, optional(','), ')'),
-        id_attr: $ => seq('@', 'id', '(', $._expression, optional(','), ')'),
-        interpolate_attr: $ => choice(seq('@', 'interpolate', '(', $._interpolate_type_name, optional(','), ')'), seq('@', 'interpolate', '(', $._interpolate_type_name, ',', $._interpolate_sampling_name, optional(','), ')')),
-        _interpolate_type_name: $ => $._ident_pattern_token,
-        _interpolate_sampling_name: $ => $._ident_pattern_token,
-        invariant_attr: $ => seq('@', 'invariant'),
-        location_attr: $ => seq('@', 'location', '(', $._expression, optional(','), ')'),
-        must_use_attr: $ => seq('@', 'must_use'),
-        size_attr: $ => seq('@', 'size', '(', $._expression, optional(','), ')'),
-        workgroup_size_attr: $ => choice(seq('@', 'workgroup_size', '(', $._expression, optional(','), ')'), seq('@', 'workgroup_size', '(', $._expression, ',', $._expression, optional(','), ')'), seq('@', 'workgroup_size', '(', $._expression, ',', $._expression, ',', $._expression, optional(','), ')')),
-        vertex_attr: $ => seq('@', 'vertex'),
-        fragment_attr: $ => seq('@', 'fragment'),
-        compute_attr: $ => seq('@', 'compute'),
-        custom_attr: $ => prec.right(seq('@', $._ident_pattern_token, optional(seq('(', optional(seq($._expression, repeat(seq(',', $._expression)), optional(','))), ')')))), // precedence: a parenthesis following an attribute is always part of the attribute.
+        attribute: $ => prec.right(seq('@', field('name', $._ident_pattern_token), field('arguments', optional($._argument_expression_list)))), // precedence: a parenthesis following an attribute is always part of the attribute.
+        // attribute: $ => choice($.custom_attr, $.align_attr, $.binding_attr, $.blend_src_attr, $.builtin_attr, $.const_attr, $.diagnostic_attr, $.group_attr, $.id_attr, $.interpolate_attr, $.invariant_attr, $.location_attr, $.must_use_attr, $.size_attr, $.workgroup_size_attr, $.vertex_attr, $.fragment_attr, $.compute_attr),
+        // align_attr: $ => seq('@', 'align', '(', $._expression, optional(','), ')'),
+        // binding_attr: $ => seq('@', 'binding', '(', $._expression, optional(','), ')'),
+        // blend_src_attr: $ => seq('@', 'blend_src', '(', $._expression, optional(','), ')'),
+        // builtin_attr: $ => seq('@', 'builtin', '(', $._builtin_value_name, optional(','), ')'),
+        // _builtin_value_name: $ => $._ident_pattern_token,
+        // const_attr: $ => seq('@', 'const'),
+        // diagnostic_attr: $ => seq('@', 'diagnostic', $._diagnostic_control),
+        // group_attr: $ => seq('@', 'group', '(', $._expression, optional(','), ')'),
+        // id_attr: $ => seq('@', 'id', '(', $._expression, optional(','), ')'),
+        // interpolate_attr: $ => choice(seq('@', 'interpolate', '(', $._interpolate_type_name, optional(','), ')'), seq('@', 'interpolate', '(', $._interpolate_type_name, ',', $._interpolate_sampling_name, optional(','), ')')),
+        // _interpolate_type_name: $ => $._ident_pattern_token,
+        // _interpolate_sampling_name: $ => $._ident_pattern_token,
+        // invariant_attr: $ => seq('@', 'invariant'),
+        // location_attr: $ => seq('@', 'location', '(', $._expression, optional(','), ')'),
+        // must_use_attr: $ => seq('@', 'must_use'),
+        // size_attr: $ => seq('@', 'size', '(', $._expression, optional(','), ')'),
+        // workgroup_size_attr: $ => choice(seq('@', 'workgroup_size', '(', $._expression, optional(','), ')'), seq('@', 'workgroup_size', '(', $._expression, ',', $._expression, optional(','), ')'), seq('@', 'workgroup_size', '(', $._expression, ',', $._expression, ',', $._expression, optional(','), ')')),
+        // vertex_attr: $ => seq('@', 'vertex'),
+        // fragment_attr: $ => seq('@', 'fragment'),
+        // compute_attr: $ => seq('@', 'compute'),
+        // custom_attr: $ => prec.right(seq('@', $._ident_pattern_token, optional(seq('(', optional(seq($._expression, repeat(seq(',', $._expression)), optional(','))), ')')))), // precedence: a parenthesis following an attribute is always part of the attribute.
 
         // structs
         struct_decl: $ => seq('struct', field('name', $._ident), field('body', $.struct_body)),
@@ -133,8 +134,8 @@ module.exports = grammar({
 
         // function calls
         _call_phrase: $ => seq($._template_elaborated_ident, $._argument_expression_list),
-        _argument_expression_list: $ => seq('(', optional($._expression_comma_list), ')'),
-        _expression_comma_list: $ => seq(field('argument', $._expression), repeat(seq(',', field('argument', $._expression))), optional(',')),
+        _argument_expression_list: $ => seq('(', optional($.argument_list), ')'),
+        argument_list: $ => seq($._expression, repeat(seq(',', $._expression)), optional(',')), // renamed from spec "expression_comma_list"
 
         // expressions
         _short_circuit_or_expression: $ => prec.left(1, seq(field('left', $._expression), field('operator', '||'), field('right', $._expression))),
@@ -262,7 +263,7 @@ module.exports = grammar({
         param_list: $ => seq($.param, repeat(seq(',', $.param)), optional(',')),
         param: $ => seq(repeat($.attribute), field('name', $._ident), ':', field('type', $.type_specifier)),
 
-        comment: $ => /\/\/.*/,
+        line_comment: $ => /\/\/.*/,
         _blankspace: $ => /[\u0020\u0009\u000a\u000b\u000c\u000d\u0085\u200e\u200f\u2028\u2029]/u
     }
 })
