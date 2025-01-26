@@ -127,7 +127,6 @@ module.exports = grammar({
         // variables and values
         global_variable_decl: $ => seq($.variable_decl, optional(seq('=', $._expression))),
         global_value_decl: $ => choice(seq('const', $._optionally_typed_ident, '=', $._expression), seq('override', $._optionally_typed_ident, optional(seq('=', $._expression)))),
-        variable_or_value_statement: $ => choice($.variable_decl, seq($.variable_decl, '=', $._expression), seq('let', $._optionally_typed_ident, '=', $._expression), seq('const', $._optionally_typed_ident, '=', $._expression)),
         variable_decl: $ => seq('var', $._disambiguate_template, optional($.template_list), $._optionally_typed_ident),
 
         _optionally_typed_ident: $ => seq($.ident, optional(seq(':', $.type_specifier))),
@@ -190,17 +189,18 @@ module.exports = grammar({
         ),
 
         // statements
-        _decorated_statement: $ => seq(repeat($.attribute), $.statement),
-        statement: $ => choice(';', seq($.return_statement, ';'), $.if_statement, $.switch_statement, $.loop_statement, $.for_statement, $.while_statement, seq($.func_call_statement, ';'), seq($.variable_or_value_statement, ';'), seq($.break_statement, ';'), seq($.continue_statement, ';'), seq('discard', ';'), seq($.variable_updating_statement, ';'), $.compound_statement, seq($.const_assert_statement, ';'), $.continuing_statement, seq($.break_if_statement, ';')),
+        _decorated_statement: $ => seq(repeat($.attribute), $._statement),
+        _statement: $ => choice(';', $.return_statement, $.if_statement, $.switch_statement, $.loop_statement, $.for_statement, $.while_statement, $.func_call_statement, $.variable_or_value_statement, $.break_statement, $.continue_statement, $.discard_statement, $.variable_updating_statement, $.compound_statement, $.const_assert_statement, $.continuing_statement, $.break_if_statement),
         compound_statement: $ => seq('{', repeat($._decorated_statement), '}'),
         assignment_statement: $ => choice(seq($._expression, choice('=', $.compound_assignment_operator), $._expression), seq('_', '=', $._expression)),
         compound_assignment_operator: $ => choice('+=', '-=', '*=', '/=', '%=', '&=', '|=', '^=', $.shift_right_assign, $.shift_left_assign),
         increment_statement: $ => seq($._expression, '++'),
         decrement_statement: $ => seq($._expression, '--'),
-        return_statement: $ => seq('return', optional($._expression)),
-        func_call_statement: $ => $._call_phrase,
-        const_assert_statement: $ => seq('const_assert', $._expression),
-        variable_updating_statement: $ => choice($.assignment_statement, $.increment_statement, $.decrement_statement),
+        return_statement: $ => seq('return', optional($._expression), ';'),
+        func_call_statement: $ => seq($._call_phrase, ';'),
+        const_assert_statement: $ => seq('const_assert', $._expression, ';'),
+        variable_updating_statement: $ => seq(choice($.assignment_statement, $.increment_statement, $.decrement_statement), ';'),
+        variable_or_value_statement: $ => seq(choice($.variable_decl, seq($.variable_decl, '=', $._expression), seq('let', $._optionally_typed_ident, '=', $._expression), seq('const', $._optionally_typed_ident, '=', $._expression)), ';'),
 
         // if statement
         if_statement: $ => seq($.if_clause, repeat($.else_if_clause), optional($.else_clause)),
@@ -224,10 +224,11 @@ module.exports = grammar({
         for_update: $ => choice($.variable_updating_statement, $.func_call_statement),
         loop_statement: $ => seq('loop', repeat($.attribute), $.compound_statement),
         while_statement: $ => seq('while', $._expression, $.compound_statement),
-        break_statement: $ => 'break',
-        break_if_statement: $ => seq('break', 'if', $._expression),
-        continue_statement: $ => 'continue',
+        break_statement: $ => seq('break', ';'),
+        break_if_statement: $ => seq('break', 'if', $._expression, ';'),
+        continue_statement: $ => seq('continue', ';'),
         continuing_statement: $ => seq('continuing', $.compound_statement),
+        discard_statement: $ => seq('discard', ';'),
 
         // function declaration
         function_decl: $ => seq($.function_header, $.compound_statement),
