@@ -1,16 +1,9 @@
-// Copyright (C) [2024] World Wide Web Consortium,
+// This software or document includes material copied from or derived from
+// tree-sitter-wgsl (https://github.com/gpuweb/tree-sitter-wgsl).
+// Copyright (c) 2025 World Wide Web Consortium,
 // (Massachusetts Institute of Technology, European Research Consortium for
 // Informatics and Mathematics, Keio University, Beihang).
-// All Rights Reserved.
-//
-// This work is distributed under the W3C (R) Software License [1] in the hope
-// that it will be useful, but WITHOUT ANY WARRANTY; without even the implied
-// warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
-//
-// [1] http://www.w3.org/Consortium/Legal/copyright-software
-
-// **** This file is auto-generated. Do not edit. ****
-// generated: 2024-09-01
+// https://www.w3.org/copyright/software-license-2023/
 
 module.exports = grammar({
     name: 'wesl',
@@ -46,14 +39,12 @@ module.exports = grammar({
         translation_unit: $ => seq(repeat($.import), repeat($._decorated_global_directive), repeat($._decorated_global_decl)),
 
         // imports
-        import: $ => seq(repeat($.attribute), 'import', $._import_path, ';'),
-        _import_path: $ => choice(seq(field('path', repeat1(seq($._ident, '::'))), $._import_content), $.import_item),
-        _import_content: $ => choice($.import_item, $.import_collection),
-        import_item: $ => seq(field('name', $._ident), optional(seq('as', field('rename', $._ident)))),
-        import_collection: $ => seq('{', repeat1($.import), '}'),
-
-        _decorated_global_decl: $ => seq(repeat($.attribute), $.global_decl),
-        global_decl: $ => choice(';', $.global_variable_decl, $.global_value_decl, $.type_alias_decl, $.struct_decl, $.function_decl, $.const_assert_statement),
+        import: $ => seq(repeat($.attribute), 'import', choice(seq($.import_path, $.import_content), $.import_item), ';'),
+        import_path: $ => seq(optional($.import_path), $._ident_pattern_token, '::'), // XXX: how to make this not recursive? couldn't get it to work with repeat1(seq($._ident_pattern_token, '::'))
+        // import_path: $ => prec.right(repeat1(seq($._ident_pattern_token, '::'))),
+        import_content: $ => choice($.import_item, $.import_collection),
+        import_item: $ => seq(field('name', $._ident_pattern_token), optional(seq('as', field('rename', $._ident_pattern_token)))),
+        import_collection: $ => seq('{', repeat1(seq($.import_path, $.import_content)), '}'),
 
         // literals
         _literal: $ => choice($.int_literal, $.float_literal, $.bool_literal),
@@ -68,10 +59,16 @@ module.exports = grammar({
         // idents
         _ident: $ => seq($._ident_pattern_token, $._disambiguate_template),
         _member_ident: $ => $._ident_pattern_token,
-        _template_elaborated_ident: $ => seq($._ident, $._disambiguate_template, optional($.template_list)),
+        _template_elaborated_ident: $ => seq(optional($.ident_path), $._ident, optional($.template_list)), // import_path is a WESL extension: qualified identifiers
+        ident_path: $ => seq(optional($.ident_path), $._ident, '::'),
         _ident_pattern_token: $ => $.identifier,
         identifier: $ => /([_\p{XID_Start}][\p{XID_Continue}]+)|([\p{XID_Start}])/u, // 'identifier' is tree-sitter's standard name so we output that instead of 'ident_pattern_token'
         type_specifier: $ => $._template_elaborated_ident,
+
+        // templates
+        template_list: $ => seq($.template_args_start, $._template_arg_comma_list, $.template_args_end),
+        _template_arg_comma_list: $ => seq($._template_arg_expression, repeat(seq(',', $._template_arg_expression)), optional(',')),
+        _template_arg_expression: $ => $._expression,
 
         // directives
         _decorated_global_directive: $ => seq(repeat($.attribute), $.global_directive),
@@ -88,35 +85,12 @@ module.exports = grammar({
         _software_extension_list: $ => seq($._software_extension_name, repeat(seq(',', $._software_extension_name)), optional(',')),
         _software_extension_name: $ => $._ident_pattern_token,
 
-        // templates
-        template_list: $ => seq($.template_args_start, $._template_arg_comma_list, $.template_args_end),
-        _template_arg_comma_list: $ => seq($._template_arg_expression, repeat(seq(',', $._template_arg_expression)), optional(',')),
-        _template_arg_expression: $ => $._expression,
-
         // attributes
         attribute: $ => prec.right(seq('@', field('name', $._ident_pattern_token), field('arguments', optional($._argument_expression_list)))), // precedence: a parenthesis following an attribute is always part of the attribute.
-        // attribute: $ => choice($.custom_attr, $.align_attr, $.binding_attr, $.blend_src_attr, $.builtin_attr, $.const_attr, $.diagnostic_attr, $.group_attr, $.id_attr, $.interpolate_attr, $.invariant_attr, $.location_attr, $.must_use_attr, $.size_attr, $.workgroup_size_attr, $.vertex_attr, $.fragment_attr, $.compute_attr),
-        // align_attr: $ => seq('@', 'align', '(', $._expression, optional(','), ')'),
-        // binding_attr: $ => seq('@', 'binding', '(', $._expression, optional(','), ')'),
-        // blend_src_attr: $ => seq('@', 'blend_src', '(', $._expression, optional(','), ')'),
-        // builtin_attr: $ => seq('@', 'builtin', '(', $._builtin_value_name, optional(','), ')'),
-        // _builtin_value_name: $ => $._ident_pattern_token,
-        // const_attr: $ => seq('@', 'const'),
-        // diagnostic_attr: $ => seq('@', 'diagnostic', $._diagnostic_control),
-        // group_attr: $ => seq('@', 'group', '(', $._expression, optional(','), ')'),
-        // id_attr: $ => seq('@', 'id', '(', $._expression, optional(','), ')'),
-        // interpolate_attr: $ => choice(seq('@', 'interpolate', '(', $._interpolate_type_name, optional(','), ')'), seq('@', 'interpolate', '(', $._interpolate_type_name, ',', $._interpolate_sampling_name, optional(','), ')')),
-        // _interpolate_type_name: $ => $._ident_pattern_token,
-        // _interpolate_sampling_name: $ => $._ident_pattern_token,
-        // invariant_attr: $ => seq('@', 'invariant'),
-        // location_attr: $ => seq('@', 'location', '(', $._expression, optional(','), ')'),
-        // must_use_attr: $ => seq('@', 'must_use'),
-        // size_attr: $ => seq('@', 'size', '(', $._expression, optional(','), ')'),
-        // workgroup_size_attr: $ => choice(seq('@', 'workgroup_size', '(', $._expression, optional(','), ')'), seq('@', 'workgroup_size', '(', $._expression, ',', $._expression, optional(','), ')'), seq('@', 'workgroup_size', '(', $._expression, ',', $._expression, ',', $._expression, optional(','), ')')),
-        // vertex_attr: $ => seq('@', 'vertex'),
-        // fragment_attr: $ => seq('@', 'fragment'),
-        // compute_attr: $ => seq('@', 'compute'),
-        // custom_attr: $ => prec.right(seq('@', $._ident_pattern_token, optional(seq('(', optional(seq($._expression, repeat(seq(',', $._expression)), optional(','))), ')')))), // precedence: a parenthesis following an attribute is always part of the attribute.
+
+        // declarations
+        _decorated_global_decl: $ => seq(repeat($.attribute), $.global_decl),
+        global_decl: $ => choice(';', $.global_variable_decl, $.global_value_decl, $.type_alias_decl, $.struct_decl, $.function_decl, $.const_assert_statement),
 
         // structs
         struct_decl: $ => seq('struct', field('name', $._ident), field('body', $.struct_body)),
