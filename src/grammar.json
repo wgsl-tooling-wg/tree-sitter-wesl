@@ -1936,7 +1936,7 @@
                   },
                   {
                     "type": "SYMBOL",
-                    "name": "compound_assignment_operator"
+                    "name": "_compound_assignment_operator"
                   }
                 ]
               }
@@ -1990,7 +1990,7 @@
         }
       ]
     },
-    "compound_assignment_operator": {
+    "_compound_assignment_operator": {
       "type": "CHOICE",
       "members": [
         {
@@ -2125,28 +2125,19 @@
       ]
     },
     "_variable_updating_statement": {
-      "type": "SEQ",
+      "type": "CHOICE",
       "members": [
         {
-          "type": "CHOICE",
-          "members": [
-            {
-              "type": "SYMBOL",
-              "name": "assignment_statement"
-            },
-            {
-              "type": "SYMBOL",
-              "name": "increment_statement"
-            },
-            {
-              "type": "SYMBOL",
-              "name": "decrement_statement"
-            }
-          ]
+          "type": "SYMBOL",
+          "name": "assignment_statement"
         },
         {
-          "type": "STRING",
-          "value": ";"
+          "type": "SYMBOL",
+          "name": "increment_statement"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "decrement_statement"
         }
       ]
     },

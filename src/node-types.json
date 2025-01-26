@@ -125,12 +125,48 @@
         "required": true,
         "types": [
           {
+            "type": "%=",
+            "named": false
+          },
+          {
+            "type": "&=",
+            "named": false
+          },
+          {
+            "type": "*=",
+            "named": false
+          },
+          {
+            "type": "+=",
+            "named": false
+          },
+          {
+            "type": "-=",
+            "named": false
+          },
+          {
+            "type": "/=",
+            "named": false
+          },
+          {
             "type": "=",
             "named": false
           },
           {
-            "type": "compound_assignment_operator",
+            "type": "^=",
+            "named": false
+          },
+          {
+            "type": "shift_left_assign",
             "named": true
+          },
+          {
+            "type": "shift_right_assign",
+            "named": true
+          },
+          {
+            "type": "|=",
+            "named": false
           }
         ]
       },
@@ -598,25 +634,6 @@
     }
   },
   {
-    "type": "compound_assignment_operator",
-    "named": true,
-    "fields": {},
-    "children": {
-      "multiple": false,
-      "required": false,
-      "types": [
-        {
-          "type": "shift_left_assign",
-          "named": true
-        },
-        {
-          "type": "shift_right_assign",
-          "named": true
-        }
-      ]
-    }
-  },
-  {
     "type": "compound_statement",
     "named": true,
     "fields": {},
@@ -1062,13 +1079,9 @@
         ]
       },
       "init": {
-        "multiple": true,
+        "multiple": false,
         "required": false,
         "types": [
-          {
-            "type": ";",
-            "named": false
-          },
           {
             "type": "assignment_statement",
             "named": true
@@ -1092,13 +1105,9 @@
         ]
       },
       "update": {
-        "multiple": true,
+        "multiple": false,
         "required": false,
         "types": [
-          {
-            "type": ";",
-            "named": false
-          },
           {
             "type": "assignment_statement",
             "named": true

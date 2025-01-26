@@ -186,16 +186,16 @@ module.exports = grammar({
         ),
         compound_statement: $ => seq('{', repeat($._decorated_statement), '}'),
         assignment_statement: $ => choice(
-            seq(field('left', $._expression), field('operator', choice('=', $.compound_assignment_operator)), field('right', $._expression), ';'),
+            seq(field('left', $._expression), field('operator', choice('=', $._compound_assignment_operator)), field('right', $._expression), ';'),
             seq(field('left', '_'), field('operator', '='), field('right', $._expression), ';')
         ),
-        compound_assignment_operator: $ => choice('+=', '-=', '*=', '/=', '%=', '&=', '|=', '^=', $.shift_right_assign, $.shift_left_assign),
+        _compound_assignment_operator: $ => choice('+=', '-=', '*=', '/=', '%=', '&=', '|=', '^=', $.shift_right_assign, $.shift_left_assign),
         increment_statement: $ => seq($._expression, '++', ';'),
         decrement_statement: $ => seq($._expression, '--', ';'),
         return_statement: $ => seq('return', optional($._expression), ';'),
         func_call_statement: $ => seq($._call_phrase, ';'),
         const_assert_statement: $ => seq('const_assert', $._expression, ';'),
-        _variable_updating_statement: $ => seq(choice($.assignment_statement, $.increment_statement, $.decrement_statement), ';'),
+        _variable_updating_statement: $ => choice($.assignment_statement, $.increment_statement, $.decrement_statement),
         variable_or_value_statement: $ => choice(
             seq($.variable_decl, ';'),
             seq($.variable_decl, '=', $._expression, ';'),
