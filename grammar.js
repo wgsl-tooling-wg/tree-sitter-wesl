@@ -28,6 +28,7 @@ module.exports = grammar({
         $.line_comment,
         $.block_comment,
         $._blankspace,
+        $.preproc_custom,
     ],
 
     // WGSL has no parsing conflicts.
@@ -35,8 +36,10 @@ module.exports = grammar({
 
     word: $ => $.identifier,
 
+    inline: $ => [],
+
     rules: {
-        translation_unit: $ => seq(repeat($.import), repeat($._decorated_global_directive), repeat($._decorated_global_decl)),
+        translation_unit: $ => seq(repeat(choice($.import, $.preproc_bevy_import)), repeat($._decorated_global_directive), repeat($._decorated_global_decl)),
 
         // imports
         import: $ => seq(repeat($.attribute), 'import', choice(seq($.import_path, $.import_content), $.import_item), ';'),
@@ -233,9 +236,28 @@ module.exports = grammar({
 
         // function declaration
         function_decl: $ => seq($.function_header, field('body', $.compound_statement)),
-        function_header: $ => seq('fn', field('name', $._ident), '(', field('parameters', optional($.param_list)), ')', optional(seq('->', repeat($.attribute), field('return_type', $.type_specifier) /* in the spec this is template_elaborated_ident but why? */))),
+        function_header: $ => seq(
+            optional(choice('virtual', 'override')), // naga_oil (Bevy) extension
+            'fn', field('name', $._ident), '(', field('parameters', optional($.param_list)), ')',
+            optional(seq('->', repeat($.attribute), field('return_type', $.type_specifier)))
+        ),
         param_list: $ => seq($.param, repeat(seq(',', $.param)), optional(',')),
         param: $ => seq(repeat($.attribute), field('name', $._ident), ':', field('type', $.type_specifier)),
+
+        // preprocessor (for Bevy and friends)
+        // adapted from 'tree-sitter-c' https://github.com/tree-sitter/tree-sitter-c
+
+        preproc_custom: $ => seq(
+          field('directive', $.preproc_directive),
+          field('argument', repeat($._expression)),
+          token.immediate(/\r?\n/),
+        ),
+        preproc_directive: _ => /#[ \t]*[a-zA-Z0-9]\w*/,
+        preproc_argument: _ => token(prec(-1, /\S([^/\n]|\/[^*]|\\\r?\n)*/)),
+
+        preproc_bevy_import: $ => seq('#import', choice(seq($.import_path, $.import_content), $.import_item)),
+
+        // extras
 
         line_comment: $ => /\/\/.*/,
         _blankspace: $ => /[\u0020\u0009\u000a\u000b\u000c\u000d\u0085\u200e\u200f\u2028\u2029]/u

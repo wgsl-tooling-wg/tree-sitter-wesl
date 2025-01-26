@@ -2076,6 +2076,99 @@
     }
   },
   {
+    "type": "preproc_bevy_import",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": true,
+      "required": true,
+      "types": [
+        {
+          "type": "import_content",
+          "named": true
+        },
+        {
+          "type": "import_item",
+          "named": true
+        },
+        {
+          "type": "import_path",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "preproc_custom",
+    "named": true,
+    "fields": {
+      "argument": {
+        "multiple": true,
+        "required": false,
+        "types": [
+          {
+            "type": "binary_expression",
+            "named": true
+          },
+          {
+            "type": "bool_literal",
+            "named": true
+          },
+          {
+            "type": "call_expression",
+            "named": true
+          },
+          {
+            "type": "float_literal",
+            "named": true
+          },
+          {
+            "type": "ident_path",
+            "named": true
+          },
+          {
+            "type": "identifier",
+            "named": true
+          },
+          {
+            "type": "indexing_expression",
+            "named": true
+          },
+          {
+            "type": "int_literal",
+            "named": true
+          },
+          {
+            "type": "named_component_expression",
+            "named": true
+          },
+          {
+            "type": "paren_expression",
+            "named": true
+          },
+          {
+            "type": "template_list",
+            "named": true
+          },
+          {
+            "type": "unary_expression",
+            "named": true
+          }
+        ]
+      },
+      "directive": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "preproc_directive",
+            "named": true
+          }
+        ]
+      }
+    }
+  },
+  {
     "type": "requires_directive",
     "named": true,
     "fields": {},
@@ -2430,6 +2523,10 @@
         {
           "type": "import",
           "named": true
+        },
+        {
+          "type": "preproc_bevy_import",
+          "named": true
         }
       ]
     }
@@ -2768,6 +2865,10 @@
     "named": false
   },
   {
+    "type": "#import",
+    "named": false
+  },
+  {
     "type": "%",
     "named": false
   },
@@ -3008,6 +3109,10 @@
     "named": false
   },
   {
+    "type": "preproc_directive",
+    "named": true
+  },
+  {
     "type": "requires",
     "named": false
   },
@@ -3053,6 +3158,10 @@
   },
   {
     "type": "var",
+    "named": false
+  },
+  {
+    "type": "virtual",
     "named": false
   },
   {

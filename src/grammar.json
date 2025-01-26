@@ -9,8 +9,17 @@
         {
           "type": "REPEAT",
           "content": {
-            "type": "SYMBOL",
-            "name": "import"
+            "type": "CHOICE",
+            "members": [
+              {
+                "type": "SYMBOL",
+                "name": "import"
+              },
+              {
+                "type": "SYMBOL",
+                "name": "preproc_bevy_import"
+              }
+            ]
           }
         },
         {
@@ -2775,6 +2784,27 @@
       "type": "SEQ",
       "members": [
         {
+          "type": "CHOICE",
+          "members": [
+            {
+              "type": "CHOICE",
+              "members": [
+                {
+                  "type": "STRING",
+                  "value": "virtual"
+                },
+                {
+                  "type": "STRING",
+                  "value": "override"
+                }
+              ]
+            },
+            {
+              "type": "BLANK"
+            }
+          ]
+        },
+        {
           "type": "STRING",
           "value": "fn"
         },
@@ -2913,6 +2943,83 @@
         }
       ]
     },
+    "preproc_custom": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "FIELD",
+          "name": "directive",
+          "content": {
+            "type": "SYMBOL",
+            "name": "preproc_directive"
+          }
+        },
+        {
+          "type": "FIELD",
+          "name": "argument",
+          "content": {
+            "type": "REPEAT",
+            "content": {
+              "type": "SYMBOL",
+              "name": "_expression"
+            }
+          }
+        },
+        {
+          "type": "IMMEDIATE_TOKEN",
+          "content": {
+            "type": "PATTERN",
+            "value": "\\r?\\n"
+          }
+        }
+      ]
+    },
+    "preproc_directive": {
+      "type": "PATTERN",
+      "value": "#[ \\t]*[a-zA-Z0-9]\\w*"
+    },
+    "preproc_argument": {
+      "type": "TOKEN",
+      "content": {
+        "type": "PREC",
+        "value": -1,
+        "content": {
+          "type": "PATTERN",
+          "value": "\\S([^/\\n]|\\/[^*]|\\\\\\r?\\n)*"
+        }
+      }
+    },
+    "preproc_bevy_import": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "STRING",
+          "value": "#import"
+        },
+        {
+          "type": "CHOICE",
+          "members": [
+            {
+              "type": "SEQ",
+              "members": [
+                {
+                  "type": "SYMBOL",
+                  "name": "import_path"
+                },
+                {
+                  "type": "SYMBOL",
+                  "name": "import_content"
+                }
+              ]
+            },
+            {
+              "type": "SYMBOL",
+              "name": "import_item"
+            }
+          ]
+        }
+      ]
+    },
     "line_comment": {
       "type": "PATTERN",
       "value": "\\/\\/.*"
@@ -2935,6 +3042,10 @@
     {
       "type": "SYMBOL",
       "name": "_blankspace"
+    },
+    {
+      "type": "SYMBOL",
+      "name": "preproc_custom"
     }
   ],
   "conflicts": [],
