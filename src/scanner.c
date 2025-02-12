@@ -1,3 +1,10 @@
+// This software or document includes material copied from or derived from
+// tree-sitter-wgsl (https://github.com/gpuweb/tree-sitter-wgsl).
+// Copyright (c) 2025 World Wide Web Consortium,
+// (Massachusetts Institute of Technology, European Research Consortium for
+// Informatics and Mathematics, Keio University, Beihang).
+// https://www.w3.org/copyright/software-license-2023/
+
 #include "tree_sitter/parser.h"
 #include <assert.h>
 #include <stdbool.h>
