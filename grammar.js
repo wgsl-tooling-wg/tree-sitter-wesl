@@ -47,7 +47,7 @@ module.exports = grammar({
         import: $ => choice(seq($.import_path, $.import_item), seq($.import_path, $.import_collection), $.import_item),
         _import_content: $ => choice($.import_item, $.import_collection),
         import_item: $ => seq(field('name', $._ident_pattern_token), optional(seq('as', field('rename', $._ident_pattern_token)))),
-        import_collection: $ => seq('{', seq($.import, repeat(seq(',', $.import)), optional(',')), '}'),
+        import_collection: $ => seq('{', comma($.import, { trail: true }), '}'),
 
         // literals
         _literal: $ => choice($.int_literal, $.float_literal, $.bool_literal),
@@ -70,7 +70,7 @@ module.exports = grammar({
 
         // templates
         template_list: $ => seq($.template_args_start, $._template_arg_comma_list, $.template_args_end),
-        _template_arg_comma_list: $ => seq($._template_arg_expression, repeat(seq(',', $._template_arg_expression)), optional(',')),
+        _template_arg_comma_list: $ => comma($._template_arg_expression, { trail: true }),
         _template_arg_expression: $ => $._expression,
 
         // directives
@@ -82,10 +82,10 @@ module.exports = grammar({
         _diagnostic_name_token: $ => $._ident_pattern_token,
         _severity_control_name: $ => $._ident_pattern_token,
         enable_directive: $ => seq('enable', $._enable_extension_list, ';'),
-        _enable_extension_list: $ => seq($._enable_extension_name, repeat(seq(',', $._enable_extension_name)), optional(',')),
+        _enable_extension_list: $ => comma($._enable_extension_name, { trail: true }),
         _enable_extension_name: $ => $._ident_pattern_token,
         requires_directive: $ => seq('requires', $._software_extension_list, ';'),
-        _software_extension_list: $ => seq($._software_extension_name, repeat(seq(',', $._software_extension_name)), optional(',')),
+        _software_extension_list: $ => comma($._software_extension_name, { trail: true }),
         _software_extension_name: $ => $._ident_pattern_token,
 
         // attributes
@@ -97,7 +97,7 @@ module.exports = grammar({
 
         // structs
         struct_decl: $ => seq('struct', field('name', $._ident), field('body', $.struct_body)),
-        struct_body: $ => seq('{', $.struct_member, repeat(seq(',', $.struct_member)), optional(','), '}'),
+        struct_body: $ => seq('{', comma($.struct_member, { trail: true }), '}'),
         struct_member: $ => seq(repeat($.attribute), field('name', $._member_ident), ':', field('type', $.type_specifier)),
 
         type_alias_decl: $ => seq('alias', field('name', $._ident), '=', field('type', $.type_specifier), ';'),
@@ -115,7 +115,7 @@ module.exports = grammar({
         // function calls
         _call_phrase: $ => seq($._template_elaborated_ident, $._argument_expression_list),
         _argument_expression_list: $ => seq('(', optional($.argument_list), ')'),
-        argument_list: $ => seq($._expression, repeat(seq(',', $._expression)), optional(',')), // renamed from spec "expression_comma_list"
+        argument_list: $ => comma($._expression, { trail: true }), // renamed from spec "expression_comma_list"
 
         // expressions
         _short_circuit_or_expression: $ => prec.left(1, seq(field('left', $._expression), field('operator', '||'), field('right', $._expression))),
@@ -221,7 +221,7 @@ module.exports = grammar({
         switch_clause: $ => choice($.case_clause, $.default_alone_clause),
         case_clause: $ => seq('case', $._case_selectors, optional(':'), field('body', $.compound_statement)),
         default_alone_clause: $ => seq('default', optional(':'), field('body', $.compound_statement)),
-        _case_selectors: $ => seq($.case_selector, repeat(seq(',', $.case_selector)), optional(',')),
+        _case_selectors: $ => comma($.case_selector, { trail: true }),
         case_selector: $ => choice('default', $._expression),
 
         // control flow statements
@@ -247,7 +247,7 @@ module.exports = grammar({
             'fn', field('name', $._ident), '(', field('parameters', optional($.param_list)), ')',
             optional(seq('->', repeat($.attribute), field('return_type', $.type_specifier)))
         ),
-        param_list: $ => seq($.param, repeat(seq(',', $.param)), optional(',')),
+        param_list: $ => comma($.param, { trail: true }),
         param: $ => seq(repeat($.attribute), field('name', $._ident), ':', field('type', $.type_specifier)),
 
         // preprocessor (for Bevy and friends)
@@ -269,3 +269,10 @@ module.exports = grammar({
         _blankspace: $ => /[\u0020\u0009\u000a\u000b\u000c\u000d\u0085\u200e\u200f\u2028\u2029]/u
     }
 })
+
+function comma(rule, { opt, trail } = { opt: false, trail: false }) {
+    const res = trail
+        ? seq(rule, repeat(seq(',', rule)), optional(','))
+        : seq(rule, repeat(seq(',', rule)))
+    return opt ? optional(res) : res
+}
