@@ -6,13 +6,12 @@
   (compound_statement)
 ] @local.scope
 
-; Definitions
-
-(param
-  (identifier) @local.definition)
-
 ; References
 
 (identifier) @local.reference
 ; (type_specifier) @local.reference
 
+; Definitions
+
+(param
+  (identifier) @local.definition)

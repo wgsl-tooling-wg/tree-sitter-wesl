@@ -1,32 +1,32 @@
-; reserved: must not be used in source code. https://www.w3.org/TR/WGSL/#reserved-words
-
-; ((identifier) @special
-;   (#any-of? @special
-;   "NULL" "Self" "abstract" "active" "alignas" "alignof" "as" "asm"
-; "asm_fragment" "async" "attribute" "auto" "await" "become" "binding_array"
-; "cast" "catch" "class" "co_await" "co_return" "co_yield" "coherent"
-; "column_major" "common" "compile" "compile_fragment" "concept" "const_cast"
-; "consteval" "constexpr" "constinit" "crate" "debugger" "decltype" "delete"
-; "demote" "demote_to_helper" "do" "dynamic_cast" "enum" "explicit" "export"
-; "extends" "extern" "external" "fallthrough" "filter" "final" "finally" "friend"
-; "from" "fxgroup" "get" "goto" "groupshared" "highp" "impl" "implements" "import"
-; "inline" "instanceof" "interface" "layout" "lowp" "macro" "macro_rules" "match"
-; "mediump" "meta" "mod" "module" "move" "mut" "mutable" "namespace" "new"
-; "nil" "noexcept" "noinline" "nointerpolation" "non_coherent" "noncoherent"
-; "noperspective" "null" "nullptr" "of" "operator" "package" "packoffset"
-; "partition" "pass" "patch" "pixelfragment" "precise" "precision" "premerge"
-; "priv" "protected" "pub" "public" "readonly" "ref" "regardless" "register"
-; "reinterpret_cast" "require" "resource" "restrict" "self" "set" "shared"
-; "sizeof" "smooth" "snorm" "static" "static_assert" "static_cast" "std"
-; "subroutine" "super" "target" "template" "this" "thread_local" "throw" "trait"
-; "try" "type" "typedef" "typeid" "typename" "typeof" "union" "unless" "unorm"
-; "unsafe" "unsized" "use" "using" "varying" "virtual" "volatile" "wgsl" "where"
-; "with" "writeonly" "yield"))
-
 ; comments
 
 (line_comment) @comment.line
 (block_comment) @comment.block
+
+; variables, types, constants
+
+(identifier) @variable
+
+(param
+  (identifier) @variable.parameter)
+
+(struct_decl
+  (identifier) @type)
+
+(struct_member
+  name: (_) @variable.other.member)
+
+(named_component_expression
+  component: (_) @variable.other.member)
+
+((identifier) @type
+  (#match? @type "^[A-Z]"))
+
+((identifier) @constant
+  (#match? @constant "^[A-Z0-9_]+$"))
+
+(type_specifier
+    (identifier) @type)
 
 ; imports (WESL extension)
 
@@ -42,17 +42,6 @@
 
 (ident_path (identifier) @namespace)
 
-; types
-
-((identifier) @constant
-  (#match? @constant "^[A-Z0-9_]+$"))
-
-((identifier) @type
-  (#match? @type "^[A-Z]"))
-
-(type_specifier
-    (identifier) @type)
-
 ; functions
 
 (function_decl 
@@ -62,13 +51,12 @@
 (call_expression
   (identifier) @function)
 
+(func_call_statement
+  (identifier) @function)
+
 ; templates
 
 (template_list) @punctuation
-
-(variable_decl ; this is var<storage> et.al
-  (template_list
-    (identifier) @keyword.storage.modifier))
 
 (type_specifier
   (template_list
@@ -77,6 +65,10 @@
 (template_list
   (template_list
     (identifier) @type))
+
+(variable_decl ; this is var<storage> et.al
+  (template_list
+    (identifier) @keyword.storage.modifier))
 
 ; attributes
 
@@ -89,29 +81,11 @@
     (identifier) @variable.builtin)
   (#eq? @attr-name "builtin"))
 
-; variables, names
-
-(param
-  (identifier) @variable.parameter)
-(variable_decl
-  (identifier) @variable)
-(const_assert_statement) @variable
-
-(struct_decl
-  (identifier) @type)
-
-(struct_member
-  name: (_) @variable.other.member)
-
-(named_component_expression
-  component: (_) @variable.other.member)
-
-(identifier) @variable
-
 ; literals
 
 (bool_literal) @constant.builtin.boolean
 (int_literal) @constant.numeric.integer
+(hex_int_literal) @constant.numeric.integer
 (float_literal) @constant.numeric.float
 
 
@@ -128,6 +102,7 @@
   "default"
   "break"
   "continue"
+  "continuing"
   "return"
   "discard"
 ] @keyword.control
