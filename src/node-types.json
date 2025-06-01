@@ -1518,11 +1518,7 @@
       "required": true,
       "types": [
         {
-          "type": "attribute",
-          "named": true
-        },
-        {
-          "type": "import_content",
+          "type": "import_collection",
           "named": true
         },
         {
@@ -1545,30 +1541,7 @@
       "required": true,
       "types": [
         {
-          "type": "import_content",
-          "named": true
-        },
-        {
-          "type": "import_path",
-          "named": true
-        }
-      ]
-    }
-  },
-  {
-    "type": "import_content",
-    "named": true,
-    "fields": {},
-    "children": {
-      "multiple": false,
-      "required": true,
-      "types": [
-        {
-          "type": "import_collection",
-          "named": true
-        },
-        {
-          "type": "import_item",
+          "type": "import",
           "named": true
         }
       ]
@@ -1610,6 +1583,33 @@
       "types": [
         {
           "type": "identifier",
+          "named": true
+        },
+        {
+          "type": "import_path",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "import_statement",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": true,
+      "required": true,
+      "types": [
+        {
+          "type": "attribute",
+          "named": true
+        },
+        {
+          "type": "import_collection",
+          "named": true
+        },
+        {
+          "type": "import_item",
           "named": true
         },
         {
@@ -2020,7 +2020,7 @@
       "required": true,
       "types": [
         {
-          "type": "import_content",
+          "type": "import_collection",
           "named": true
         },
         {
@@ -2536,7 +2536,7 @@
           "named": true
         },
         {
-          "type": "import",
+          "type": "import_statement",
           "named": true
         },
         {

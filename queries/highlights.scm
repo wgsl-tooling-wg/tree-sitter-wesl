@@ -30,17 +30,17 @@
 
 ; imports (WESL extension)
 
-(import_item (identifier) @type
-  (#match? @type "^[A-Z]"))
-
-(import_item (identifier) @constant
-  (#match? @constant "^[A-Z0-9_]+$"))
-
 (import_item (identifier) @namespace)
 
 (import_path (identifier) @namespace)
 
 (ident_path (identifier) @namespace)
+
+(import_item (identifier) @type
+  (#match? @type "^[A-Z]"))
+
+(import_item (identifier) @constant
+  (#match? @constant "^[A-Z0-9_]+$"))
 
 ; functions
 

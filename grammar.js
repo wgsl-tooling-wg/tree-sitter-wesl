@@ -39,15 +39,15 @@ module.exports = grammar({
     inline: $ => [],
 
     rules: {
-        translation_unit: $ => seq(repeat(choice($.import, $.preproc_bevy_import)), repeat($._decorated_global_directive), repeat($._decorated_global_decl)),
+        translation_unit: $ => seq(repeat(choice($.import_statement, $.preproc_bevy_import)), repeat($._decorated_global_directive), repeat($._decorated_global_decl)),
 
         // imports
-        import: $ => seq(repeat($.attribute), 'import', choice(seq($.import_path, $.import_content), $.import_item), ';'),
+        import_statement: $ => seq(repeat($.attribute), 'import', optional($.import_path), $._import_content, ';'),
         import_path: $ => seq(optional($.import_path), $._ident_pattern_token, '::'), // XXX: how to make this not recursive? couldn't get it to work with repeat1(seq($._ident_pattern_token, '::'))
-        // import_path: $ => prec.right(repeat1(seq($._ident_pattern_token, '::'))),
-        import_content: $ => choice($.import_item, $.import_collection),
+        import: $ => choice(seq($.import_path, $.import_item), seq($.import_path, $.import_collection), $.import_item),
+        _import_content: $ => choice($.import_item, $.import_collection),
         import_item: $ => seq(field('name', $._ident_pattern_token), optional(seq('as', field('rename', $._ident_pattern_token)))),
-        import_collection: $ => seq('{', repeat1(seq($.import_path, $.import_content)), '}'),
+        import_collection: $ => seq('{', seq($.import, repeat(seq(',', $.import)), optional(',')), '}'),
 
         // literals
         _literal: $ => choice($.int_literal, $.float_literal, $.bool_literal),
@@ -261,7 +261,7 @@ module.exports = grammar({
         preproc_directive: _ => /#[ \t]*[a-zA-Z0-9]\w*/,
         preproc_argument: _ => token(prec(-1, /\S([^/\n]|\/[^*]|\\\r?\n)*/)),
 
-        preproc_bevy_import: $ => seq('#import', choice(seq($.import_path, $.import_content), $.import_item)),
+        preproc_bevy_import: $ => seq('#import', choice(seq($.import_path, $._import_content), $.import_item)),
 
         // extras
 
