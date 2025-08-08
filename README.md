@@ -4,13 +4,11 @@ This repository contains a [tree-sitter](https://tree-sitter.github.io/tree-sitt
 
 ## See Also
 
+* WGSL/WESL Language support in Zed using this parser: https://github.com/lucascompython/wgsl-wesl-zed
+* `wgsl-analyzer` has a textMate grammar for WESL https://github.com/wgsl-analyzer/wgsl-analyzer
 * Auto-generated tree-sitter implementation (gpuweb): https://github.com/gpuweb/tree-sitter-wgsl
 * Widly used tree-sitter implementation (szebniok): https://github.com/szebniok/tree-sitter-wgsl
 * Fork with support for Bevy's preprocessor: https://github.com/tree-sitter-grammars/tree-sitter-wgsl-bevy
-
-## Contributing
-
-Contributions are welcome. Please join the [discord](https://discord.gg/Ng5FWmHuSv) server and introduce yourself first, or contact via [email](mailto:mathis.brossier@gmail.com).
 
 ## License
 
