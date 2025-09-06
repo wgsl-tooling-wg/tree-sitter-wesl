@@ -14,7 +14,9 @@
   (identifier) @type)
 
 (struct_member
-  name: (_) @variable.other.member)
+  name: (_) @variable.other.member
+  type: (_) @type
+  )
 
 (named_component_expression
   component: (_) @variable.other.member)
