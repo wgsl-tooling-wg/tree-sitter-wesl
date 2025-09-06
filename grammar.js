@@ -173,16 +173,16 @@ module.exports = grammar({
     // END MEW template params
     _template_arg_comma_list: ($) =>
       choice(
-        comma1($._template_arg_expression),
-        seq(comma($._template_arg_expression), comma1($._named_template_arg)),
+        comma1($.template_arg_expression),
+        seq(comma($.template_arg_expression), comma1($.named_template_arg)),
       ),
-    _named_template_arg: ($) =>
+    named_template_arg: ($) =>
       seq(
         field("name", $._ident),
         "=",
-        field("value", $._template_arg_expression),
+        field("value", $.template_arg_expression),
       ),
-    _template_arg_expression: ($) => field("expression", $._expression),
+    template_arg_expression: ($) => field("expression", $._expression),
 
     // directives
     global_directive: ($) =>

@@ -31,7 +31,7 @@
     (template_elaborated_ident (_) (template_elaborated_ident_part (identifier)) .) @type)
 
 ; imports (MEW extension)
-(template_elaborated_ident (template_elaborated_ident_part (identifier)) . (_) @namespace)
+(template_elaborated_ident (template_elaborated_ident_part (identifier) @type) . (_))
 
 ; (ident_path (identifier) @namespace)
 
@@ -49,17 +49,22 @@
 (call_expression
   (template_elaborated_ident (_) . (template_elaborated_ident_part (identifier))) @function)
 
+
+(template_elaborated_ident (template_elaborated_ident_part name: ((identifier) @namespace)) . (template_elaborated_ident_part (identifier) @type))
 (func_call_statement
-    (template_elaborated_ident (_) . (template_elaborated_ident_part (identifier))) @function)
+    (template_elaborated_ident (_) . (template_elaborated_ident_part) @function))
 
 ; templates
 
-(template_list) @punctuation
+(template_args_start) @punctuation
+(template_args_end) @punctuation
+
+; (template_list (template_arg_expression))
 
 
 (variable_decl ; this is var<storage> et.al
   (template_list
-    (template_elaborated_ident (template_elaborated_ident_part name: (identifier))))  @keyword.storage.modifier)
+    (_ (template_elaborated_ident (template_elaborated_ident_part name: (identifier)))))  @keyword.storage.modifier)
 
 ; attributes
 

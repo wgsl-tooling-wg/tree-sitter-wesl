@@ -770,7 +770,7 @@
           "members": [
             {
               "type": "SYMBOL",
-              "name": "_template_arg_expression"
+              "name": "template_arg_expression"
             },
             {
               "type": "REPEAT",
@@ -783,7 +783,7 @@
                   },
                   {
                     "type": "SYMBOL",
-                    "name": "_template_arg_expression"
+                    "name": "template_arg_expression"
                   }
                 ]
               }
@@ -813,7 +813,7 @@
                   "members": [
                     {
                       "type": "SYMBOL",
-                      "name": "_template_arg_expression"
+                      "name": "template_arg_expression"
                     },
                     {
                       "type": "REPEAT",
@@ -826,7 +826,7 @@
                           },
                           {
                             "type": "SYMBOL",
-                            "name": "_template_arg_expression"
+                            "name": "template_arg_expression"
                           }
                         ]
                       }
@@ -855,7 +855,7 @@
               "members": [
                 {
                   "type": "SYMBOL",
-                  "name": "_named_template_arg"
+                  "name": "named_template_arg"
                 },
                 {
                   "type": "REPEAT",
@@ -868,7 +868,7 @@
                       },
                       {
                         "type": "SYMBOL",
-                        "name": "_named_template_arg"
+                        "name": "named_template_arg"
                       }
                     ]
                   }
@@ -891,7 +891,7 @@
         }
       ]
     },
-    "_named_template_arg": {
+    "named_template_arg": {
       "type": "SEQ",
       "members": [
         {
@@ -911,12 +911,12 @@
           "name": "value",
           "content": {
             "type": "SYMBOL",
-            "name": "_template_arg_expression"
+            "name": "template_arg_expression"
           }
         }
       ]
     },
-    "_template_arg_expression": {
+    "template_arg_expression": {
       "type": "FIELD",
       "name": "expression",
       "content": {
