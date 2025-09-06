@@ -15,7 +15,7 @@
       },
       "template_parameters": {
         "multiple": false,
-        "required": true,
+        "required": false,
         "types": [
           {
             "type": "template_parameters",
@@ -28,7 +28,7 @@
         "required": true,
         "types": [
           {
-            "type": "type_specifier",
+            "type": "alias_specifier",
             "named": true
           }
         ]
@@ -36,43 +36,27 @@
     }
   },
   {
+    "type": "alias_specifier",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": false,
+      "required": true,
+      "types": [
+        {
+          "type": "template_elaborated_ident",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
     "type": "argument_list",
     "named": true,
-    "fields": {
-      "inline_module_decl": {
-        "multiple": true,
-        "required": false,
-        "types": [
-          {
-            "type": "inline_module_decl",
-            "named": true
-          }
-        ]
-      },
-      "name": {
-        "multiple": true,
-        "required": false,
-        "types": [
-          {
-            "type": "identifier",
-            "named": true
-          }
-        ]
-      },
-      "template_args_list": {
-        "multiple": true,
-        "required": false,
-        "types": [
-          {
-            "type": "template_list",
-            "named": true
-          }
-        ]
-      }
-    },
+    "fields": {},
     "children": {
       "multiple": true,
-      "required": false,
+      "required": true,
       "types": [
         {
           "type": "binary_expression",
@@ -107,6 +91,10 @@
           "named": true
         },
         {
+          "type": "template_elaborated_ident",
+          "named": true
+        },
+        {
           "type": "unary_expression",
           "named": true
         }
@@ -117,24 +105,10 @@
     "type": "assignment_statement",
     "named": true,
     "fields": {
-      "inline_module_decl": {
-        "multiple": true,
-        "required": false,
-        "types": [
-          {
-            "type": "inline_module_decl",
-            "named": true
-          }
-        ]
-      },
       "left": {
-        "multiple": true,
+        "multiple": false,
         "required": true,
         "types": [
-          {
-            "type": "::",
-            "named": false
-          },
           {
             "type": "_",
             "named": false
@@ -156,15 +130,7 @@
             "named": true
           },
           {
-            "type": "identifier",
-            "named": true
-          },
-          {
             "type": "indexing_expression",
-            "named": true
-          },
-          {
-            "type": "inline_module_decl",
             "named": true
           },
           {
@@ -180,21 +146,11 @@
             "named": true
           },
           {
-            "type": "template_list",
+            "type": "template_elaborated_ident",
             "named": true
           },
           {
             "type": "unary_expression",
-            "named": true
-          }
-        ]
-      },
-      "name": {
-        "multiple": true,
-        "required": false,
-        "types": [
-          {
-            "type": "identifier",
             "named": true
           }
         ]
@@ -250,13 +206,9 @@
         ]
       },
       "right": {
-        "multiple": true,
+        "multiple": false,
         "required": true,
         "types": [
-          {
-            "type": "::",
-            "named": false
-          },
           {
             "type": "binary_expression",
             "named": true
@@ -274,15 +226,7 @@
             "named": true
           },
           {
-            "type": "identifier",
-            "named": true
-          },
-          {
             "type": "indexing_expression",
-            "named": true
-          },
-          {
-            "type": "inline_module_decl",
             "named": true
           },
           {
@@ -298,21 +242,11 @@
             "named": true
           },
           {
-            "type": "template_list",
+            "type": "template_elaborated_ident",
             "named": true
           },
           {
             "type": "unary_expression",
-            "named": true
-          }
-        ]
-      },
-      "template_args_list": {
-        "multiple": true,
-        "required": false,
-        "types": [
-          {
-            "type": "template_list",
             "named": true
           }
         ]
@@ -357,24 +291,10 @@
     "type": "binary_expression",
     "named": true,
     "fields": {
-      "inline_module_decl": {
-        "multiple": true,
-        "required": false,
-        "types": [
-          {
-            "type": "inline_module_decl",
-            "named": true
-          }
-        ]
-      },
       "left": {
-        "multiple": true,
+        "multiple": false,
         "required": true,
         "types": [
-          {
-            "type": "::",
-            "named": false
-          },
           {
             "type": "binary_expression",
             "named": true
@@ -392,15 +312,7 @@
             "named": true
           },
           {
-            "type": "identifier",
-            "named": true
-          },
-          {
             "type": "indexing_expression",
-            "named": true
-          },
-          {
-            "type": "inline_module_decl",
             "named": true
           },
           {
@@ -416,21 +328,11 @@
             "named": true
           },
           {
-            "type": "template_list",
+            "type": "template_elaborated_ident",
             "named": true
           },
           {
             "type": "unary_expression",
-            "named": true
-          }
-        ]
-      },
-      "name": {
-        "multiple": true,
-        "required": false,
-        "types": [
-          {
-            "type": "identifier",
             "named": true
           }
         ]
@@ -514,13 +416,9 @@
         ]
       },
       "right": {
-        "multiple": true,
+        "multiple": false,
         "required": true,
         "types": [
-          {
-            "type": "::",
-            "named": false
-          },
           {
             "type": "binary_expression",
             "named": true
@@ -538,15 +436,7 @@
             "named": true
           },
           {
-            "type": "identifier",
-            "named": true
-          },
-          {
             "type": "indexing_expression",
-            "named": true
-          },
-          {
-            "type": "inline_module_decl",
             "named": true
           },
           {
@@ -562,21 +452,11 @@
             "named": true
           },
           {
-            "type": "template_list",
+            "type": "template_elaborated_ident",
             "named": true
           },
           {
             "type": "unary_expression",
-            "named": true
-          }
-        ]
-      },
-      "template_args_list": {
-        "multiple": true,
-        "required": false,
-        "types": [
-          {
-            "type": "template_list",
             "named": true
           }
         ]
@@ -591,41 +471,10 @@
   {
     "type": "break_if_statement",
     "named": true,
-    "fields": {
-      "inline_module_decl": {
-        "multiple": true,
-        "required": false,
-        "types": [
-          {
-            "type": "inline_module_decl",
-            "named": true
-          }
-        ]
-      },
-      "name": {
-        "multiple": true,
-        "required": false,
-        "types": [
-          {
-            "type": "identifier",
-            "named": true
-          }
-        ]
-      },
-      "template_args_list": {
-        "multiple": true,
-        "required": false,
-        "types": [
-          {
-            "type": "template_list",
-            "named": true
-          }
-        ]
-      }
-    },
+    "fields": {},
     "children": {
       "multiple": false,
-      "required": false,
+      "required": true,
       "types": [
         {
           "type": "binary_expression",
@@ -660,6 +509,10 @@
           "named": true
         },
         {
+          "type": "template_elaborated_ident",
+          "named": true
+        },
+        {
           "type": "unary_expression",
           "named": true
         }
@@ -674,44 +527,17 @@
   {
     "type": "call_expression",
     "named": true,
-    "fields": {
-      "inline_module_decl": {
-        "multiple": true,
-        "required": false,
-        "types": [
-          {
-            "type": "inline_module_decl",
-            "named": true
-          }
-        ]
-      },
-      "name": {
-        "multiple": true,
-        "required": true,
-        "types": [
-          {
-            "type": "identifier",
-            "named": true
-          }
-        ]
-      },
-      "template_args_list": {
-        "multiple": true,
-        "required": false,
-        "types": [
-          {
-            "type": "template_list",
-            "named": true
-          }
-        ]
-      }
-    },
+    "fields": {},
     "children": {
-      "multiple": false,
-      "required": false,
+      "multiple": true,
+      "required": true,
       "types": [
         {
           "type": "argument_list",
+          "named": true
+        },
+        {
+          "type": "template_elaborated_ident",
           "named": true
         }
       ]
@@ -746,38 +572,7 @@
   {
     "type": "case_selector",
     "named": true,
-    "fields": {
-      "inline_module_decl": {
-        "multiple": true,
-        "required": false,
-        "types": [
-          {
-            "type": "inline_module_decl",
-            "named": true
-          }
-        ]
-      },
-      "name": {
-        "multiple": true,
-        "required": false,
-        "types": [
-          {
-            "type": "identifier",
-            "named": true
-          }
-        ]
-      },
-      "template_args_list": {
-        "multiple": true,
-        "required": false,
-        "types": [
-          {
-            "type": "template_list",
-            "named": true
-          }
-        ]
-      }
-    },
+    "fields": {},
     "children": {
       "multiple": false,
       "required": false,
@@ -812,6 +607,10 @@
         },
         {
           "type": "paren_expression",
+          "named": true
+        },
+        {
+          "type": "template_elaborated_ident",
           "named": true
         },
         {
@@ -839,64 +638,44 @@
   {
     "type": "compound_statement",
     "named": true,
-    "fields": {},
-    "children": {
-      "multiple": true,
-      "required": false,
-      "types": [
-        {
-          "type": "attribute",
-          "named": true
-        },
-        {
-          "type": "compound_directive",
-          "named": true
-        },
-        {
-          "type": "statement",
-          "named": true
-        }
-      ]
+    "fields": {
+      "directives": {
+        "multiple": true,
+        "required": false,
+        "types": [
+          {
+            "type": "attribute",
+            "named": true
+          },
+          {
+            "type": "compound_directive",
+            "named": true
+          }
+        ]
+      },
+      "statements": {
+        "multiple": true,
+        "required": false,
+        "types": [
+          {
+            "type": "attribute",
+            "named": true
+          },
+          {
+            "type": "statement",
+            "named": true
+          }
+        ]
+      }
     }
   },
   {
     "type": "const_assert_statement",
     "named": true,
-    "fields": {
-      "inline_module_decl": {
-        "multiple": true,
-        "required": false,
-        "types": [
-          {
-            "type": "inline_module_decl",
-            "named": true
-          }
-        ]
-      },
-      "name": {
-        "multiple": true,
-        "required": false,
-        "types": [
-          {
-            "type": "identifier",
-            "named": true
-          }
-        ]
-      },
-      "template_args_list": {
-        "multiple": true,
-        "required": false,
-        "types": [
-          {
-            "type": "template_list",
-            "named": true
-          }
-        ]
-      }
-    },
+    "fields": {},
     "children": {
       "multiple": false,
-      "required": false,
+      "required": true,
       "types": [
         {
           "type": "binary_expression",
@@ -931,7 +710,73 @@
           "named": true
         },
         {
+          "type": "template_elaborated_ident",
+          "named": true
+        },
+        {
           "type": "unary_expression",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "const_value_decl",
+    "named": true,
+    "fields": {
+      "initializer": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "binary_expression",
+            "named": true
+          },
+          {
+            "type": "bool_literal",
+            "named": true
+          },
+          {
+            "type": "call_expression",
+            "named": true
+          },
+          {
+            "type": "float_literal",
+            "named": true
+          },
+          {
+            "type": "indexing_expression",
+            "named": true
+          },
+          {
+            "type": "int_literal",
+            "named": true
+          },
+          {
+            "type": "named_component_expression",
+            "named": true
+          },
+          {
+            "type": "paren_expression",
+            "named": true
+          },
+          {
+            "type": "template_elaborated_ident",
+            "named": true
+          },
+          {
+            "type": "unary_expression",
+            "named": true
+          }
+        ]
+      }
+    },
+    "children": {
+      "multiple": false,
+      "required": true,
+      "types": [
+        {
+          "type": "optionally_typed_ident",
           "named": true
         }
       ]
@@ -1008,41 +853,10 @@
   {
     "type": "decrement_statement",
     "named": true,
-    "fields": {
-      "inline_module_decl": {
-        "multiple": true,
-        "required": false,
-        "types": [
-          {
-            "type": "inline_module_decl",
-            "named": true
-          }
-        ]
-      },
-      "name": {
-        "multiple": true,
-        "required": false,
-        "types": [
-          {
-            "type": "identifier",
-            "named": true
-          }
-        ]
-      },
-      "template_args_list": {
-        "multiple": true,
-        "required": false,
-        "types": [
-          {
-            "type": "template_list",
-            "named": true
-          }
-        ]
-      }
-    },
+    "fields": {},
     "children": {
       "multiple": false,
-      "required": false,
+      "required": true,
       "types": [
         {
           "type": "binary_expression",
@@ -1074,6 +888,10 @@
         },
         {
           "type": "paren_expression",
+          "named": true
+        },
+        {
+          "type": "template_elaborated_ident",
           "named": true
         },
         {
@@ -1165,13 +983,9 @@
         ]
       },
       "condition": {
-        "multiple": true,
+        "multiple": false,
         "required": true,
         "types": [
-          {
-            "type": "::",
-            "named": false
-          },
           {
             "type": "binary_expression",
             "named": true
@@ -1189,15 +1003,7 @@
             "named": true
           },
           {
-            "type": "identifier",
-            "named": true
-          },
-          {
             "type": "indexing_expression",
-            "named": true
-          },
-          {
-            "type": "inline_module_decl",
             "named": true
           },
           {
@@ -1213,41 +1019,11 @@
             "named": true
           },
           {
-            "type": "template_list",
+            "type": "template_elaborated_ident",
             "named": true
           },
           {
             "type": "unary_expression",
-            "named": true
-          }
-        ]
-      },
-      "inline_module_decl": {
-        "multiple": true,
-        "required": false,
-        "types": [
-          {
-            "type": "inline_module_decl",
-            "named": true
-          }
-        ]
-      },
-      "name": {
-        "multiple": true,
-        "required": false,
-        "types": [
-          {
-            "type": "identifier",
-            "named": true
-          }
-        ]
-      },
-      "template_args_list": {
-        "multiple": true,
-        "required": false,
-        "types": [
-          {
-            "type": "template_list",
             "named": true
           }
         ]
@@ -1272,37 +1048,16 @@
   {
     "type": "extend_directive",
     "named": true,
-    "fields": {
-      "inline_module_decl": {
-        "multiple": true,
-        "required": false,
-        "types": [
-          {
-            "type": "inline_module_decl",
-            "named": true
-          }
-        ]
-      },
-      "name": {
-        "multiple": true,
-        "required": true,
-        "types": [
-          {
-            "type": "identifier",
-            "named": true
-          }
-        ]
-      },
-      "template_args_list": {
-        "multiple": true,
-        "required": false,
-        "types": [
-          {
-            "type": "template_list",
-            "named": true
-          }
-        ]
-      }
+    "fields": {},
+    "children": {
+      "multiple": false,
+      "required": true,
+      "types": [
+        {
+          "type": "template_elaborated_ident",
+          "named": true
+        }
+      ]
     }
   },
   {
@@ -1315,13 +1070,9 @@
     "named": true,
     "fields": {
       "condition": {
-        "multiple": true,
+        "multiple": false,
         "required": false,
         "types": [
-          {
-            "type": "::",
-            "named": false
-          },
           {
             "type": "binary_expression",
             "named": true
@@ -1339,15 +1090,7 @@
             "named": true
           },
           {
-            "type": "identifier",
-            "named": true
-          },
-          {
             "type": "indexing_expression",
-            "named": true
-          },
-          {
-            "type": "inline_module_decl",
             "named": true
           },
           {
@@ -1363,7 +1106,7 @@
             "named": true
           },
           {
-            "type": "template_list",
+            "type": "template_elaborated_ident",
             "named": true
           },
           {
@@ -1394,36 +1137,6 @@
           },
           {
             "type": "variable_or_value_statement",
-            "named": true
-          }
-        ]
-      },
-      "inline_module_decl": {
-        "multiple": true,
-        "required": false,
-        "types": [
-          {
-            "type": "inline_module_decl",
-            "named": true
-          }
-        ]
-      },
-      "name": {
-        "multiple": true,
-        "required": false,
-        "types": [
-          {
-            "type": "identifier",
-            "named": true
-          }
-        ]
-      },
-      "template_args_list": {
-        "multiple": true,
-        "required": false,
-        "types": [
-          {
-            "type": "template_list",
             "named": true
           }
         ]
@@ -1481,44 +1194,17 @@
   {
     "type": "func_call_statement",
     "named": true,
-    "fields": {
-      "inline_module_decl": {
-        "multiple": true,
-        "required": false,
-        "types": [
-          {
-            "type": "inline_module_decl",
-            "named": true
-          }
-        ]
-      },
-      "name": {
-        "multiple": true,
-        "required": true,
-        "types": [
-          {
-            "type": "identifier",
-            "named": true
-          }
-        ]
-      },
-      "template_args_list": {
-        "multiple": true,
-        "required": false,
-        "types": [
-          {
-            "type": "template_list",
-            "named": true
-          }
-        ]
-      }
-    },
+    "fields": {},
     "children": {
-      "multiple": false,
-      "required": false,
+      "multiple": true,
+      "required": true,
       "types": [
         {
           "type": "argument_list",
+          "named": true
+        },
+        {
+          "type": "template_elaborated_ident",
           "named": true
         }
       ]
@@ -1685,7 +1371,7 @@
         "required": false,
         "types": [
           {
-            "type": "::",
+            "type": "=",
             "named": false
           },
           {
@@ -1705,15 +1391,7 @@
             "named": true
           },
           {
-            "type": "identifier",
-            "named": true
-          },
-          {
             "type": "indexing_expression",
-            "named": true
-          },
-          {
-            "type": "inline_module_decl",
             "named": true
           },
           {
@@ -1729,160 +1407,35 @@
             "named": true
           },
           {
-            "type": "template_list",
+            "type": "template_elaborated_ident",
             "named": true
           },
           {
             "type": "unary_expression",
-            "named": true
-          }
-        ]
-      },
-      "inline_module_decl": {
-        "multiple": true,
-        "required": false,
-        "types": [
-          {
-            "type": "inline_module_decl",
-            "named": true
-          }
-        ]
-      },
-      "name": {
-        "multiple": true,
-        "required": true,
-        "types": [
-          {
-            "type": "identifier",
-            "named": true
-          }
-        ]
-      },
-      "template_args_list": {
-        "multiple": true,
-        "required": false,
-        "types": [
-          {
-            "type": "template_list",
-            "named": true
-          }
-        ]
-      },
-      "template_parameters": {
-        "multiple": false,
-        "required": false,
-        "types": [
-          {
-            "type": "template_parameters",
-            "named": true
-          }
-        ]
-      },
-      "type": {
-        "multiple": false,
-        "required": false,
-        "types": [
-          {
-            "type": "type_specifier",
-            "named": true
-          }
-        ]
-      }
-    }
-  },
-  {
-    "type": "global_variable_decl",
-    "named": true,
-    "fields": {
-      "initializer": {
-        "multiple": true,
-        "required": false,
-        "types": [
-          {
-            "type": "::",
-            "named": false
-          },
-          {
-            "type": "binary_expression",
-            "named": true
-          },
-          {
-            "type": "bool_literal",
-            "named": true
-          },
-          {
-            "type": "call_expression",
-            "named": true
-          },
-          {
-            "type": "float_literal",
-            "named": true
-          },
-          {
-            "type": "identifier",
-            "named": true
-          },
-          {
-            "type": "indexing_expression",
-            "named": true
-          },
-          {
-            "type": "inline_module_decl",
-            "named": true
-          },
-          {
-            "type": "int_literal",
-            "named": true
-          },
-          {
-            "type": "named_component_expression",
-            "named": true
-          },
-          {
-            "type": "paren_expression",
-            "named": true
-          },
-          {
-            "type": "template_list",
-            "named": true
-          },
-          {
-            "type": "unary_expression",
-            "named": true
-          }
-        ]
-      },
-      "inline_module_decl": {
-        "multiple": true,
-        "required": false,
-        "types": [
-          {
-            "type": "inline_module_decl",
-            "named": true
-          }
-        ]
-      },
-      "name": {
-        "multiple": true,
-        "required": false,
-        "types": [
-          {
-            "type": "identifier",
-            "named": true
-          }
-        ]
-      },
-      "template_args_list": {
-        "multiple": true,
-        "required": false,
-        "types": [
-          {
-            "type": "template_list",
             "named": true
           }
         ]
       }
     },
+    "children": {
+      "multiple": false,
+      "required": true,
+      "types": [
+        {
+          "type": "const_value_decl",
+          "named": true
+        },
+        {
+          "type": "optionally_typed_ident",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "global_variable_decl",
+    "named": true,
+    "fields": {},
     "children": {
       "multiple": false,
       "required": true,
@@ -1909,13 +1462,9 @@
         ]
       },
       "condition": {
-        "multiple": true,
+        "multiple": false,
         "required": true,
         "types": [
-          {
-            "type": "::",
-            "named": false
-          },
           {
             "type": "binary_expression",
             "named": true
@@ -1933,15 +1482,7 @@
             "named": true
           },
           {
-            "type": "identifier",
-            "named": true
-          },
-          {
             "type": "indexing_expression",
-            "named": true
-          },
-          {
-            "type": "inline_module_decl",
             "named": true
           },
           {
@@ -1957,41 +1498,11 @@
             "named": true
           },
           {
-            "type": "template_list",
+            "type": "template_elaborated_ident",
             "named": true
           },
           {
             "type": "unary_expression",
-            "named": true
-          }
-        ]
-      },
-      "inline_module_decl": {
-        "multiple": true,
-        "required": false,
-        "types": [
-          {
-            "type": "inline_module_decl",
-            "named": true
-          }
-        ]
-      },
-      "name": {
-        "multiple": true,
-        "required": false,
-        "types": [
-          {
-            "type": "identifier",
-            "named": true
-          }
-        ]
-      },
-      "template_args_list": {
-        "multiple": true,
-        "required": false,
-        "types": [
-          {
-            "type": "template_list",
             "named": true
           }
         ]
@@ -2059,51 +1570,10 @@
   {
     "type": "import_path",
     "named": true,
-    "fields": {
-      "inline_module_decl": {
-        "multiple": true,
-        "required": false,
-        "types": [
-          {
-            "type": "inline_module_decl",
-            "named": true
-          }
-        ]
-      },
-      "item": {
-        "multiple": false,
-        "required": false,
-        "types": [
-          {
-            "type": "item_import",
-            "named": true
-          }
-        ]
-      },
-      "name": {
-        "multiple": true,
-        "required": false,
-        "types": [
-          {
-            "type": "identifier",
-            "named": true
-          }
-        ]
-      },
-      "template_args_list": {
-        "multiple": true,
-        "required": false,
-        "types": [
-          {
-            "type": "template_list",
-            "named": true
-          }
-        ]
-      }
-    },
+    "fields": {},
     "children": {
-      "multiple": false,
-      "required": false,
+      "multiple": true,
+      "required": true,
       "types": [
         {
           "type": "import_collection",
@@ -2112,6 +1582,10 @@
         {
           "type": "item_import",
           "named": true
+        },
+        {
+          "type": "template_elaborated_ident_part",
+          "named": true
         }
       ]
     }
@@ -2119,41 +1593,10 @@
   {
     "type": "increment_statement",
     "named": true,
-    "fields": {
-      "inline_module_decl": {
-        "multiple": true,
-        "required": false,
-        "types": [
-          {
-            "type": "inline_module_decl",
-            "named": true
-          }
-        ]
-      },
-      "name": {
-        "multiple": true,
-        "required": false,
-        "types": [
-          {
-            "type": "identifier",
-            "named": true
-          }
-        ]
-      },
-      "template_args_list": {
-        "multiple": true,
-        "required": false,
-        "types": [
-          {
-            "type": "template_list",
-            "named": true
-          }
-        ]
-      }
-    },
+    "fields": {},
     "children": {
       "multiple": false,
-      "required": false,
+      "required": true,
       "types": [
         {
           "type": "binary_expression",
@@ -2188,6 +1631,10 @@
           "named": true
         },
         {
+          "type": "template_elaborated_ident",
+          "named": true
+        },
+        {
           "type": "unary_expression",
           "named": true
         }
@@ -2199,13 +1646,9 @@
     "named": true,
     "fields": {
       "index": {
-        "multiple": true,
+        "multiple": false,
         "required": true,
         "types": [
-          {
-            "type": "::",
-            "named": false
-          },
           {
             "type": "binary_expression",
             "named": true
@@ -2223,15 +1666,7 @@
             "named": true
           },
           {
-            "type": "identifier",
-            "named": true
-          },
-          {
             "type": "indexing_expression",
-            "named": true
-          },
-          {
-            "type": "inline_module_decl",
             "named": true
           },
           {
@@ -2247,7 +1682,7 @@
             "named": true
           },
           {
-            "type": "template_list",
+            "type": "template_elaborated_ident",
             "named": true
           },
           {
@@ -2256,44 +1691,10 @@
           }
         ]
       },
-      "inline_module_decl": {
-        "multiple": true,
-        "required": false,
-        "types": [
-          {
-            "type": "inline_module_decl",
-            "named": true
-          }
-        ]
-      },
-      "name": {
-        "multiple": true,
-        "required": false,
-        "types": [
-          {
-            "type": "identifier",
-            "named": true
-          }
-        ]
-      },
-      "template_args_list": {
-        "multiple": true,
-        "required": false,
-        "types": [
-          {
-            "type": "template_list",
-            "named": true
-          }
-        ]
-      },
       "value": {
-        "multiple": true,
+        "multiple": false,
         "required": true,
         "types": [
-          {
-            "type": "::",
-            "named": false
-          },
           {
             "type": "binary_expression",
             "named": true
@@ -2311,15 +1712,7 @@
             "named": true
           },
           {
-            "type": "identifier",
-            "named": true
-          },
-          {
             "type": "indexing_expression",
-            "named": true
-          },
-          {
-            "type": "inline_module_decl",
             "named": true
           },
           {
@@ -2335,7 +1728,7 @@
             "named": true
           },
           {
-            "type": "template_list",
+            "type": "template_elaborated_ident",
             "named": true
           },
           {
@@ -2347,10 +1740,10 @@
     }
   },
   {
-    "type": "inline_module_decl",
+    "type": "inline_module",
     "named": true,
     "fields": {
-      "module_declaration": {
+      "declarations": {
         "multiple": true,
         "required": false,
         "types": [
@@ -2364,7 +1757,7 @@
           }
         ]
       },
-      "module_directives": {
+      "directives": {
         "multiple": true,
         "required": false,
         "types": [
@@ -2433,11 +1826,66 @@
       "required": false,
       "types": [
         {
-          "type": "inline_module_decl",
+          "type": "inline_module",
           "named": true
         },
         {
           "type": "template_list",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "let_decl",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": true,
+      "required": true,
+      "types": [
+        {
+          "type": "binary_expression",
+          "named": true
+        },
+        {
+          "type": "bool_literal",
+          "named": true
+        },
+        {
+          "type": "call_expression",
+          "named": true
+        },
+        {
+          "type": "float_literal",
+          "named": true
+        },
+        {
+          "type": "indexing_expression",
+          "named": true
+        },
+        {
+          "type": "int_literal",
+          "named": true
+        },
+        {
+          "type": "named_component_expression",
+          "named": true
+        },
+        {
+          "type": "optionally_typed_ident",
+          "named": true
+        },
+        {
+          "type": "paren_expression",
+          "named": true
+        },
+        {
+          "type": "template_elaborated_ident",
+          "named": true
+        },
+        {
+          "type": "unary_expression",
           "named": true
         }
       ]
@@ -2519,6 +1967,34 @@
     "type": "module_decl",
     "named": true,
     "fields": {
+      "declarations": {
+        "multiple": true,
+        "required": false,
+        "types": [
+          {
+            "type": "attribute",
+            "named": true
+          },
+          {
+            "type": "module_declaration",
+            "named": true
+          }
+        ]
+      },
+      "directives": {
+        "multiple": true,
+        "required": false,
+        "types": [
+          {
+            "type": "attribute",
+            "named": true
+          },
+          {
+            "type": "module_directive",
+            "named": true
+          }
+        ]
+      },
       "name": {
         "multiple": false,
         "required": true,
@@ -2531,21 +2007,9 @@
       }
     },
     "children": {
-      "multiple": true,
+      "multiple": false,
       "required": false,
       "types": [
-        {
-          "type": "attribute",
-          "named": true
-        },
-        {
-          "type": "module_declaration",
-          "named": true
-        },
-        {
-          "type": "module_directive",
-          "named": true
-        },
         {
           "type": "template_parameters",
           "named": true
@@ -2614,210 +2078,22 @@
   {
     "type": "module_value_decl",
     "named": true,
-    "fields": {
-      "initializer": {
-        "multiple": true,
-        "required": true,
-        "types": [
-          {
-            "type": "::",
-            "named": false
-          },
-          {
-            "type": "binary_expression",
-            "named": true
-          },
-          {
-            "type": "bool_literal",
-            "named": true
-          },
-          {
-            "type": "call_expression",
-            "named": true
-          },
-          {
-            "type": "float_literal",
-            "named": true
-          },
-          {
-            "type": "identifier",
-            "named": true
-          },
-          {
-            "type": "indexing_expression",
-            "named": true
-          },
-          {
-            "type": "inline_module_decl",
-            "named": true
-          },
-          {
-            "type": "int_literal",
-            "named": true
-          },
-          {
-            "type": "named_component_expression",
-            "named": true
-          },
-          {
-            "type": "paren_expression",
-            "named": true
-          },
-          {
-            "type": "template_list",
-            "named": true
-          },
-          {
-            "type": "unary_expression",
-            "named": true
-          }
-        ]
-      },
-      "inline_module_decl": {
-        "multiple": true,
-        "required": false,
-        "types": [
-          {
-            "type": "inline_module_decl",
-            "named": true
-          }
-        ]
-      },
-      "name": {
-        "multiple": true,
-        "required": true,
-        "types": [
-          {
-            "type": "identifier",
-            "named": true
-          }
-        ]
-      },
-      "template_args_list": {
-        "multiple": true,
-        "required": false,
-        "types": [
-          {
-            "type": "template_list",
-            "named": true
-          }
-        ]
-      },
-      "template_parameters": {
-        "multiple": false,
-        "required": false,
-        "types": [
-          {
-            "type": "template_parameters",
-            "named": true
-          }
-        ]
-      },
-      "type": {
-        "multiple": false,
-        "required": false,
-        "types": [
-          {
-            "type": "type_specifier",
-            "named": true
-          }
-        ]
-      }
+    "fields": {},
+    "children": {
+      "multiple": false,
+      "required": true,
+      "types": [
+        {
+          "type": "const_value_decl",
+          "named": true
+        }
+      ]
     }
   },
   {
     "type": "module_variable_decl",
     "named": true,
-    "fields": {
-      "initializer": {
-        "multiple": true,
-        "required": false,
-        "types": [
-          {
-            "type": "::",
-            "named": false
-          },
-          {
-            "type": "binary_expression",
-            "named": true
-          },
-          {
-            "type": "bool_literal",
-            "named": true
-          },
-          {
-            "type": "call_expression",
-            "named": true
-          },
-          {
-            "type": "float_literal",
-            "named": true
-          },
-          {
-            "type": "identifier",
-            "named": true
-          },
-          {
-            "type": "indexing_expression",
-            "named": true
-          },
-          {
-            "type": "inline_module_decl",
-            "named": true
-          },
-          {
-            "type": "int_literal",
-            "named": true
-          },
-          {
-            "type": "named_component_expression",
-            "named": true
-          },
-          {
-            "type": "paren_expression",
-            "named": true
-          },
-          {
-            "type": "template_list",
-            "named": true
-          },
-          {
-            "type": "unary_expression",
-            "named": true
-          }
-        ]
-      },
-      "inline_module_decl": {
-        "multiple": true,
-        "required": false,
-        "types": [
-          {
-            "type": "inline_module_decl",
-            "named": true
-          }
-        ]
-      },
-      "name": {
-        "multiple": true,
-        "required": false,
-        "types": [
-          {
-            "type": "identifier",
-            "named": true
-          }
-        ]
-      },
-      "template_args_list": {
-        "multiple": true,
-        "required": false,
-        "types": [
-          {
-            "type": "template_list",
-            "named": true
-          }
-        ]
-      }
-    },
+    "fields": {},
     "children": {
       "multiple": false,
       "required": true,
@@ -2847,44 +2123,10 @@
           }
         ]
       },
-      "inline_module_decl": {
-        "multiple": true,
-        "required": false,
-        "types": [
-          {
-            "type": "inline_module_decl",
-            "named": true
-          }
-        ]
-      },
-      "name": {
-        "multiple": true,
-        "required": false,
-        "types": [
-          {
-            "type": "identifier",
-            "named": true
-          }
-        ]
-      },
-      "template_args_list": {
-        "multiple": true,
-        "required": false,
-        "types": [
-          {
-            "type": "template_list",
-            "named": true
-          }
-        ]
-      },
       "value": {
-        "multiple": true,
+        "multiple": false,
         "required": true,
         "types": [
-          {
-            "type": "::",
-            "named": false
-          },
           {
             "type": "binary_expression",
             "named": true
@@ -2902,15 +2144,7 @@
             "named": true
           },
           {
-            "type": "identifier",
-            "named": true
-          },
-          {
             "type": "indexing_expression",
-            "named": true
-          },
-          {
-            "type": "inline_module_decl",
             "named": true
           },
           {
@@ -2926,11 +2160,41 @@
             "named": true
           },
           {
-            "type": "template_list",
+            "type": "template_elaborated_ident",
             "named": true
           },
           {
             "type": "unary_expression",
+            "named": true
+          }
+        ]
+      }
+    }
+  },
+  {
+    "type": "optionally_typed_ident",
+    "named": true,
+    "fields": {
+      "name": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "identifier",
+            "named": true
+          }
+        ]
+      },
+      "type": {
+        "multiple": true,
+        "required": false,
+        "types": [
+          {
+            "type": ":",
+            "named": false
+          },
+          {
+            "type": "type_specifier",
             "named": true
           }
         ]
@@ -2991,41 +2255,10 @@
   {
     "type": "paren_expression",
     "named": true,
-    "fields": {
-      "inline_module_decl": {
-        "multiple": true,
-        "required": false,
-        "types": [
-          {
-            "type": "inline_module_decl",
-            "named": true
-          }
-        ]
-      },
-      "name": {
-        "multiple": true,
-        "required": false,
-        "types": [
-          {
-            "type": "identifier",
-            "named": true
-          }
-        ]
-      },
-      "template_args_list": {
-        "multiple": true,
-        "required": false,
-        "types": [
-          {
-            "type": "template_list",
-            "named": true
-          }
-        ]
-      }
-    },
+    "fields": {},
     "children": {
       "multiple": false,
-      "required": false,
+      "required": true,
       "types": [
         {
           "type": "binary_expression",
@@ -3057,6 +2290,10 @@
         },
         {
           "type": "paren_expression",
+          "named": true
+        },
+        {
+          "type": "template_elaborated_ident",
           "named": true
         },
         {
@@ -3084,38 +2321,7 @@
   {
     "type": "return_statement",
     "named": true,
-    "fields": {
-      "inline_module_decl": {
-        "multiple": true,
-        "required": false,
-        "types": [
-          {
-            "type": "inline_module_decl",
-            "named": true
-          }
-        ]
-      },
-      "name": {
-        "multiple": true,
-        "required": false,
-        "types": [
-          {
-            "type": "identifier",
-            "named": true
-          }
-        ]
-      },
-      "template_args_list": {
-        "multiple": true,
-        "required": false,
-        "types": [
-          {
-            "type": "template_list",
-            "named": true
-          }
-        ]
-      }
-    },
+    "fields": {},
     "children": {
       "multiple": false,
       "required": false,
@@ -3153,6 +2359,10 @@
           "named": true
         },
         {
+          "type": "template_elaborated_ident",
+          "named": true
+        },
+        {
           "type": "unary_expression",
           "named": true
         }
@@ -3163,12 +2373,12 @@
     "type": "root_import_path",
     "named": true,
     "fields": {
-      "inline_module_decl": {
-        "multiple": true,
+      "collection": {
+        "multiple": false,
         "required": false,
         "types": [
           {
-            "type": "inline_module_decl",
+            "type": "import_collection",
             "named": true
           }
         ]
@@ -3183,16 +2393,6 @@
           }
         ]
       },
-      "name": {
-        "multiple": true,
-        "required": false,
-        "types": [
-          {
-            "type": "identifier",
-            "named": true
-          }
-        ]
-      },
       "path": {
         "multiple": true,
         "required": false,
@@ -3202,39 +2402,11 @@
             "named": false
           },
           {
-            "type": "identifier",
-            "named": true
-          },
-          {
-            "type": "inline_module_decl",
-            "named": true
-          },
-          {
-            "type": "template_list",
-            "named": true
-          }
-        ]
-      },
-      "template_args_list": {
-        "multiple": true,
-        "required": false,
-        "types": [
-          {
-            "type": "template_list",
+            "type": "template_elaborated_ident_part",
             "named": true
           }
         ]
       }
-    },
-    "children": {
-      "multiple": false,
-      "required": false,
-      "types": [
-        {
-          "type": "import_collection",
-          "named": true
-        }
-      ]
     }
   },
   {
@@ -3451,44 +2623,10 @@
           }
         ]
       },
-      "inline_module_decl": {
-        "multiple": true,
-        "required": false,
-        "types": [
-          {
-            "type": "inline_module_decl",
-            "named": true
-          }
-        ]
-      },
-      "name": {
-        "multiple": true,
-        "required": false,
-        "types": [
-          {
-            "type": "identifier",
-            "named": true
-          }
-        ]
-      },
-      "template_args_list": {
-        "multiple": true,
-        "required": false,
-        "types": [
-          {
-            "type": "template_list",
-            "named": true
-          }
-        ]
-      },
       "value": {
-        "multiple": true,
+        "multiple": false,
         "required": true,
         "types": [
-          {
-            "type": "::",
-            "named": false
-          },
           {
             "type": "binary_expression",
             "named": true
@@ -3506,15 +2644,7 @@
             "named": true
           },
           {
-            "type": "identifier",
-            "named": true
-          },
-          {
             "type": "indexing_expression",
-            "named": true
-          },
-          {
-            "type": "inline_module_decl",
             "named": true
           },
           {
@@ -3530,7 +2660,7 @@
             "named": true
           },
           {
-            "type": "template_list",
+            "type": "template_elaborated_ident",
             "named": true
           },
           {
@@ -3547,10 +2677,157 @@
     "fields": {}
   },
   {
+    "type": "template_elaborated_ident",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": true,
+      "required": true,
+      "types": [
+        {
+          "type": "template_elaborated_ident_part",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "template_elaborated_ident_part",
+    "named": true,
+    "fields": {
+      "inline_template_args": {
+        "multiple": false,
+        "required": false,
+        "types": [
+          {
+            "type": "inline_module",
+            "named": true
+          }
+        ]
+      },
+      "name": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "identifier",
+            "named": true
+          }
+        ]
+      },
+      "template_args": {
+        "multiple": false,
+        "required": false,
+        "types": [
+          {
+            "type": "template_list",
+            "named": true
+          }
+        ]
+      }
+    }
+  },
+  {
     "type": "template_list",
     "named": true,
     "fields": {
-      "arg_name": {
+      "args": {
+        "multiple": true,
+        "required": false,
+        "types": [
+          {
+            "type": ",",
+            "named": false
+          },
+          {
+            "type": "binary_expression",
+            "named": true
+          },
+          {
+            "type": "bool_literal",
+            "named": true
+          },
+          {
+            "type": "call_expression",
+            "named": true
+          },
+          {
+            "type": "float_literal",
+            "named": true
+          },
+          {
+            "type": "indexing_expression",
+            "named": true
+          },
+          {
+            "type": "int_literal",
+            "named": true
+          },
+          {
+            "type": "named_component_expression",
+            "named": true
+          },
+          {
+            "type": "paren_expression",
+            "named": true
+          },
+          {
+            "type": "template_elaborated_ident",
+            "named": true
+          },
+          {
+            "type": "unary_expression",
+            "named": true
+          }
+        ]
+      },
+      "expression": {
+        "multiple": true,
+        "required": false,
+        "types": [
+          {
+            "type": "binary_expression",
+            "named": true
+          },
+          {
+            "type": "bool_literal",
+            "named": true
+          },
+          {
+            "type": "call_expression",
+            "named": true
+          },
+          {
+            "type": "float_literal",
+            "named": true
+          },
+          {
+            "type": "indexing_expression",
+            "named": true
+          },
+          {
+            "type": "int_literal",
+            "named": true
+          },
+          {
+            "type": "named_component_expression",
+            "named": true
+          },
+          {
+            "type": "paren_expression",
+            "named": true
+          },
+          {
+            "type": "template_elaborated_ident",
+            "named": true
+          },
+          {
+            "type": "unary_expression",
+            "named": true
+          }
+        ]
+      },
+      "name": {
         "multiple": true,
         "required": false,
         "types": [
@@ -3560,12 +2837,16 @@
           }
         ]
       },
-      "expression": {
+      "named_args": {
         "multiple": true,
-        "required": true,
+        "required": false,
         "types": [
           {
-            "type": "::",
+            "type": ",",
+            "named": false
+          },
+          {
+            "type": "=",
             "named": false
           },
           {
@@ -3593,7 +2874,49 @@
             "named": true
           },
           {
-            "type": "inline_module_decl",
+            "type": "int_literal",
+            "named": true
+          },
+          {
+            "type": "named_component_expression",
+            "named": true
+          },
+          {
+            "type": "paren_expression",
+            "named": true
+          },
+          {
+            "type": "template_elaborated_ident",
+            "named": true
+          },
+          {
+            "type": "unary_expression",
+            "named": true
+          }
+        ]
+      },
+      "value": {
+        "multiple": true,
+        "required": false,
+        "types": [
+          {
+            "type": "binary_expression",
+            "named": true
+          },
+          {
+            "type": "bool_literal",
+            "named": true
+          },
+          {
+            "type": "call_expression",
+            "named": true
+          },
+          {
+            "type": "float_literal",
+            "named": true
+          },
+          {
+            "type": "indexing_expression",
             "named": true
           },
           {
@@ -3609,41 +2932,11 @@
             "named": true
           },
           {
-            "type": "template_list",
+            "type": "template_elaborated_ident",
             "named": true
           },
           {
             "type": "unary_expression",
-            "named": true
-          }
-        ]
-      },
-      "inline_module_decl": {
-        "multiple": true,
-        "required": false,
-        "types": [
-          {
-            "type": "inline_module_decl",
-            "named": true
-          }
-        ]
-      },
-      "name": {
-        "multiple": true,
-        "required": false,
-        "types": [
-          {
-            "type": "identifier",
-            "named": true
-          }
-        ]
-      },
-      "template_args_list": {
-        "multiple": true,
-        "required": false,
-        "types": [
-          {
-            "type": "template_list",
             "named": true
           }
         ]
@@ -3673,10 +2966,6 @@
         "required": false,
         "types": [
           {
-            "type": "::",
-            "named": false
-          },
-          {
             "type": "binary_expression",
             "named": true
           },
@@ -3693,15 +2982,7 @@
             "named": true
           },
           {
-            "type": "identifier",
-            "named": true
-          },
-          {
             "type": "indexing_expression",
-            "named": true
-          },
-          {
-            "type": "inline_module_decl",
             "named": true
           },
           {
@@ -3717,21 +2998,11 @@
             "named": true
           },
           {
-            "type": "template_list",
+            "type": "template_elaborated_ident",
             "named": true
           },
           {
             "type": "unary_expression",
-            "named": true
-          }
-        ]
-      },
-      "inline_module_decl": {
-        "multiple": true,
-        "required": false,
-        "types": [
-          {
-            "type": "inline_module_decl",
             "named": true
           }
         ]
@@ -3742,16 +3013,6 @@
         "types": [
           {
             "type": "identifier",
-            "named": true
-          }
-        ]
-      },
-      "template_args_list": {
-        "multiple": true,
-        "required": false,
-        "types": [
-          {
-            "type": "template_list",
             "named": true
           }
         ]
@@ -3776,56 +3037,31 @@
     "type": "translation_unit",
     "named": true,
     "root": true,
-    "fields": {},
-    "children": {
-      "multiple": true,
-      "required": false,
-      "types": [
-        {
-          "type": "attribute",
-          "named": true
-        },
-        {
-          "type": "global_decl",
-          "named": true
-        },
-        {
-          "type": "global_directive",
-          "named": true
-        }
-      ]
-    }
-  },
-  {
-    "type": "type_specifier",
-    "named": true,
     "fields": {
-      "inline_module_decl": {
+      "declarations": {
         "multiple": true,
         "required": false,
         "types": [
           {
-            "type": "inline_module_decl",
+            "type": "attribute",
             "named": true
-          }
-        ]
-      },
-      "name": {
-        "multiple": true,
-        "required": true,
-        "types": [
+          },
           {
-            "type": "identifier",
+            "type": "global_decl",
             "named": true
           }
         ]
       },
-      "template_args_list": {
+      "directives": {
         "multiple": true,
         "required": false,
         "types": [
           {
-            "type": "template_list",
+            "type": "attribute",
+            "named": true
+          },
+          {
+            "type": "global_directive",
             "named": true
           }
         ]
@@ -3833,37 +3069,28 @@
     }
   },
   {
+    "type": "type_specifier",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": false,
+      "required": true,
+      "types": [
+        {
+          "type": "template_elaborated_ident",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
     "type": "unary_expression",
     "named": true,
     "fields": {
-      "inline_module_decl": {
-        "multiple": true,
-        "required": false,
-        "types": [
-          {
-            "type": "inline_module_decl",
-            "named": true
-          }
-        ]
-      },
-      "name": {
-        "multiple": true,
-        "required": false,
-        "types": [
-          {
-            "type": "identifier",
-            "named": true
-          }
-        ]
-      },
       "operand": {
-        "multiple": true,
+        "multiple": false,
         "required": true,
         "types": [
-          {
-            "type": "::",
-            "named": false
-          },
           {
             "type": "binary_expression",
             "named": true
@@ -3881,15 +3108,7 @@
             "named": true
           },
           {
-            "type": "identifier",
-            "named": true
-          },
-          {
             "type": "indexing_expression",
-            "named": true
-          },
-          {
-            "type": "inline_module_decl",
             "named": true
           },
           {
@@ -3905,7 +3124,7 @@
             "named": true
           },
           {
-            "type": "template_list",
+            "type": "template_elaborated_ident",
             "named": true
           },
           {
@@ -3939,9 +3158,65 @@
             "named": false
           }
         ]
-      },
-      "template_args_list": {
+      }
+    }
+  },
+  {
+    "type": "variable_decl",
+    "named": true,
+    "fields": {
+      "initializer": {
         "multiple": true,
+        "required": false,
+        "types": [
+          {
+            "type": "=",
+            "named": false
+          },
+          {
+            "type": "binary_expression",
+            "named": true
+          },
+          {
+            "type": "bool_literal",
+            "named": true
+          },
+          {
+            "type": "call_expression",
+            "named": true
+          },
+          {
+            "type": "float_literal",
+            "named": true
+          },
+          {
+            "type": "indexing_expression",
+            "named": true
+          },
+          {
+            "type": "int_literal",
+            "named": true
+          },
+          {
+            "type": "named_component_expression",
+            "named": true
+          },
+          {
+            "type": "paren_expression",
+            "named": true
+          },
+          {
+            "type": "template_elaborated_ident",
+            "named": true
+          },
+          {
+            "type": "unary_expression",
+            "named": true
+          }
+        ]
+      },
+      "template_args": {
+        "multiple": false,
         "required": false,
         "types": [
           {
@@ -3950,49 +3225,13 @@
           }
         ]
       }
-    }
-  },
-  {
-    "type": "variable_decl",
-    "named": true,
-    "fields": {
-      "name": {
-        "multiple": false,
-        "required": true,
-        "types": [
-          {
-            "type": "identifier",
-            "named": true
-          }
-        ]
-      },
-      "template_parameters": {
-        "multiple": false,
-        "required": false,
-        "types": [
-          {
-            "type": "template_parameters",
-            "named": true
-          }
-        ]
-      },
-      "type": {
-        "multiple": false,
-        "required": false,
-        "types": [
-          {
-            "type": "type_specifier",
-            "named": true
-          }
-        ]
-      }
     },
     "children": {
       "multiple": false,
-      "required": false,
+      "required": true,
       "types": [
         {
-          "type": "template_list",
+          "type": "optionally_typed_ident",
           "named": true
         }
       ]
@@ -4001,96 +3240,17 @@
   {
     "type": "variable_or_value_statement",
     "named": true,
-    "fields": {
-      "inline_module_decl": {
-        "multiple": true,
-        "required": false,
-        "types": [
-          {
-            "type": "inline_module_decl",
-            "named": true
-          }
-        ]
-      },
-      "name": {
-        "multiple": true,
-        "required": false,
-        "types": [
-          {
-            "type": "identifier",
-            "named": true
-          }
-        ]
-      },
-      "template_args_list": {
-        "multiple": true,
-        "required": false,
-        "types": [
-          {
-            "type": "template_list",
-            "named": true
-          }
-        ]
-      },
-      "template_parameters": {
-        "multiple": false,
-        "required": false,
-        "types": [
-          {
-            "type": "template_parameters",
-            "named": true
-          }
-        ]
-      },
-      "type": {
-        "multiple": false,
-        "required": false,
-        "types": [
-          {
-            "type": "type_specifier",
-            "named": true
-          }
-        ]
-      }
-    },
+    "fields": {},
     "children": {
-      "multiple": true,
-      "required": false,
+      "multiple": false,
+      "required": true,
       "types": [
         {
-          "type": "binary_expression",
+          "type": "const_value_decl",
           "named": true
         },
         {
-          "type": "bool_literal",
-          "named": true
-        },
-        {
-          "type": "call_expression",
-          "named": true
-        },
-        {
-          "type": "float_literal",
-          "named": true
-        },
-        {
-          "type": "indexing_expression",
-          "named": true
-        },
-        {
-          "type": "int_literal",
-          "named": true
-        },
-        {
-          "type": "named_component_expression",
-          "named": true
-        },
-        {
-          "type": "paren_expression",
-          "named": true
-        },
-        {
-          "type": "unary_expression",
+          "type": "let_decl",
           "named": true
         },
         {
@@ -4115,13 +3275,9 @@
         ]
       },
       "condition": {
-        "multiple": true,
+        "multiple": false,
         "required": true,
         "types": [
-          {
-            "type": "::",
-            "named": false
-          },
           {
             "type": "binary_expression",
             "named": true
@@ -4139,15 +3295,7 @@
             "named": true
           },
           {
-            "type": "identifier",
-            "named": true
-          },
-          {
             "type": "indexing_expression",
-            "named": true
-          },
-          {
-            "type": "inline_module_decl",
             "named": true
           },
           {
@@ -4163,41 +3311,11 @@
             "named": true
           },
           {
-            "type": "template_list",
+            "type": "template_elaborated_ident",
             "named": true
           },
           {
             "type": "unary_expression",
-            "named": true
-          }
-        ]
-      },
-      "inline_module_decl": {
-        "multiple": true,
-        "required": false,
-        "types": [
-          {
-            "type": "inline_module_decl",
-            "named": true
-          }
-        ]
-      },
-      "name": {
-        "multiple": true,
-        "required": false,
-        "types": [
-          {
-            "type": "identifier",
-            "named": true
-          }
-        ]
-      },
-      "template_args_list": {
-        "multiple": true,
-        "required": false,
-        "types": [
-          {
-            "type": "template_list",
             "named": true
           }
         ]

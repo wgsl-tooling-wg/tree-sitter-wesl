@@ -26,13 +26,10 @@
   (#match? @constant "^[A-Z0-9_]+$"))
 
 (type_specifier
-    (identifier) @type)
+    (template_elaborated_ident (_) (template_elaborated_ident_part (identifier)) .) @type)
 
 ; imports (MEW extension)
-
-(item_import (identifier) @namespace)
-
-(import_path (identifier) @namespace)
+(template_elaborated_ident (template_elaborated_ident_part (identifier)) . (_) @namespace)
 
 ; (ident_path (identifier) @namespace)
 
@@ -49,26 +46,19 @@
     (identifier) @function))
 
 (call_expression
-  (identifier) @function)
+  (template_elaborated_ident (_) . (template_elaborated_ident_part (identifier))) @function)
 
 (func_call_statement
-  (identifier) @function)
+    (template_elaborated_ident (_) . (template_elaborated_ident_part (identifier))) @function)
 
 ; templates
 
 (template_list) @punctuation
 
-(type_specifier
-  (template_list
-    (identifier) @type))
-
-(template_list
-  (template_list
-    (identifier) @type))
 
 (variable_decl ; this is var<storage> et.al
   (template_list
-    (identifier) @keyword.storage.modifier))
+    (template_elaborated_ident (template_elaborated_ident_part name: (identifier))))  @keyword.storage.modifier)
 
 ; attributes
 
@@ -76,9 +66,9 @@
   (identifier) @attribute) @attribute
 
 (attribute
-  (identifier) @attr-name
-  (argument_list
-    (identifier) @variable.builtin)
+  name: (identifier) @attr-name
+  arguments: (argument_list
+    (template_elaborated_ident (template_elaborated_ident_part (identifier)).) @variable.builtin)
   (#eq? @attr-name "builtin"))
 
 ; literals
@@ -121,6 +111,7 @@
   "fn"
   "struct"
   "alias"
+  "extend"
 ] @keyword
 
 ; expressions

@@ -9,6 +9,7 @@
       "file-types": ["imew", "mew", "wgsl"],
       "highlights": "queries/highlights.scm",
       "injection-regex": "^(mew|wgsl|imew)$",
+      "locals": "queries/locals.scm",
       "class-name": "TreeSitterMew"
     }
   ],
