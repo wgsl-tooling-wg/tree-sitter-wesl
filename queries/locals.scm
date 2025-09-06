@@ -4,6 +4,7 @@
   (global_decl)
   (switch_body)
   (compound_statement)
+  (module_decl)
 ] @local.scope
 
 ; References

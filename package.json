@@ -1,52 +1,45 @@
 {
-  "name": "tree-sitter-wesl",
-  "version": "1.0.0",
-  "description": "WESL (WGSL Extended) grammar for tree-sitter",
-  "main": "index.js",
-  "types": "bindings/node",
-  "scripts": {
-    "install": "node-gyp-build",
-    "prestart": "tree-sitter build --wasm",
-    "start": "tree-sitter playground",
-    "test": "node --test bindings/node/*_test.js",
-    "prebuildify": "prebuildify --napi --strip"
-  },
-  "repository": {
-    "type": "git",
-    "url": "https://wgsl-tooling-wg/tree-sitter-wesl"
+  "name": "tree-sitter-mew",
+  "version": "0.1.0",
+  "description": "Modular Extensions to WGSL (MEW) tree-sitter grammar",
+  "repository": "https://github.com/ncthbrt/mew",
+  "license": "MIT",
+  "contributors": [
+    {
+      "name": "Mathis Brossier",
+      "email": "mathis.brossier@gmail.com"
+    }
+  ],
+  "author": {
+    "name": "Natalie Cuthbert",
+    "email": "natalie@cuthbert.co.za",
+    "url": "https://github.com/ncthbrt"
   },
   "keywords": [
     "incremental",
     "parsing",
     "tree-sitter",
-    "wgsl",
-    "wesl"
+    "mew"
   ],
   "files": [
     "grammar.js",
-    "binding.gyp",
-    "prebuilds/**",
-    "bindings/node/*",
+    "tree-sitter.json",
     "queries/*",
     "src/**",
     "*.wasm"
   ],
-  "author": "Mathis Brossier <mathis.brossier@gmail.com>",
-  "license": "MIT",
-  "dependencies": {
-    "node-addon-api": "^8.0.0",
-    "node-gyp-build": "^4.8.1"
+  "dependencies": {},
+  "devDependencies": {
+    "prebuildify": "^6.0.1",
+    "tree-sitter-cli": "^0.25.8"
   },
   "peerDependencies": {
-    "tree-sitter": "^0.21.1"
+    "tree-sitter": "^0.22.4"
   },
   "peerDependenciesMeta": {
-    "tree_sitter": {
+    "tree-sitter": {
       "optional": true
     }
   },
-  "devDependencies": {
-    "tree-sitter-cli": "^0.23.0",
-    "prebuildify": "^6.0.1"
-  }
+  "scripts": {}
 }

@@ -1,17 +1,27 @@
 [package]
-name = "tree-sitter-wesl"
-description = "Wesl grammar for tree-sitter"
+name = "tree-sitter-mew"
+description = "Modular Extensions to WGSL (MEW) tree-sitter grammar"
 version = "0.0.1"
 license = "MIT"
 readme = "README.md"
-keywords = ["incremental", "parsing", "tree-sitter", "wesl"]
+keywords = ["incremental", "parsing", "tree-sitter", "wgsl", "mew"]
 categories = ["parsing", "text-editors"]
-repository = "https://github.com/tree-sitter/tree-sitter-wesl"
+repository = "https://github.com/ncthbrt/tree-sitter-mew"
 edition = "2021"
 autoexamples = false
 
-build = "bindings/rust/build.rs"
-include = ["bindings/rust/*", "grammar.js", "queries/*", "src/*"]
+build = "build.rs"
+include = [
+  "bindings/rust/*.rs",
+  "grammar.js",
+  "queries/*",
+  "src/**/*",
+  "tree-sitter.json",
+  "LICENSE-*",
+  "COPYRIGHT",
+  "README.md"
+]
+
 
 [lib]
 path = "bindings/rust/lib.rs"
@@ -20,7 +30,7 @@ path = "bindings/rust/lib.rs"
 tree-sitter-language = "0.1"
 
 [dev-dependencies]
-tree-sitter = { version = "0.22" }
+tree-sitter = { version = "0.22.8" }
 
 [build-dependencies]
-cc = "1.0.87"
+cc = "1.2"

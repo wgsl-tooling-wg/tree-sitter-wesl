@@ -28,23 +28,23 @@
 (type_specifier
     (identifier) @type)
 
-; imports (WESL extension)
+; imports (MEW extension)
 
-(import_item (identifier) @namespace)
+(item_import (identifier) @namespace)
 
 (import_path (identifier) @namespace)
 
-(ident_path (identifier) @namespace)
+; (ident_path (identifier) @namespace)
 
-(import_item (identifier) @type
+(item_import (identifier) @type
   (#match? @type "^[A-Z]"))
 
-(import_item (identifier) @constant
+(item_import (identifier) @constant
   (#match? @constant "^[A-Z0-9_]+$"))
 
 ; functions
 
-(function_decl 
+(function_decl
   (function_header
     (identifier) @function))
 
@@ -107,20 +107,20 @@
   "discard"
 ] @keyword.control
 
-[ ; WESL import extension
+[ ; MEW import extension
   "import"
   "as"
+  "with"
 ] @keyword.control.import
 
 [
+  "module"
   "var"
   "let"
   "const"
   "fn"
   "struct"
   "alias"
-  "virtual" ; Bevy / naga_oil extension
-  "override" ; Bevy / naga_oil extension
 ] @keyword
 
 ; expressions
@@ -137,7 +137,3 @@
 
 [ "(" ")" "[" "]" "{" "}" ] @punctuation.bracket
 [ "," "." ":" ";" ] @punctuation.delimiter
-
-; preprocessor
-
-[ (preproc_directive) "#import" ] @keyword.directive

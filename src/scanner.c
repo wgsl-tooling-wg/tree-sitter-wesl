@@ -43,7 +43,7 @@ enum Token {
   ERROR,
 };
 
-static const char *tree_sitter_wesl_str(enum Token tok, bool brief) {
+static const char *tree_sitter_mew_str(enum Token tok, bool brief) {
   switch (tok) {
   case BLOCK_COMMENT:
     return "BLOCK_COMMENT";
@@ -948,7 +948,7 @@ static char *valids(const bool *const valid_symbols) {
   *p++ = ' ';
   for (int i = 0; i < ERROR; i++) {
     if (valid_symbols[i]) {
-      p += sprintf(p, " %s", tree_sitter_wesl_str((enum Token)i, true));
+      p += sprintf(p, " %s", tree_sitter_mew_str((enum Token)i, true));
     }
   }
   *p = '\0';
@@ -958,7 +958,7 @@ static char *valids(const bool *const valid_symbols) {
 /// The external token scanner function. Handles block comments and
 /// template-argument-list vs less-than / greater-than disambiguation.
 /// @return true if lexer->result_symbol was assigned a Token, or
-/// false if the token should be taken from the regular wesl tree-sitter
+/// false if the token should be taken from the regular MEW tree-sitter
 /// grammar.
 static bool scanner_scan(Scanner *scanner, TSLexer *ts_lexer,
                   const bool *const valid_symbols) {
@@ -1125,21 +1125,21 @@ static void scanner_deserialize(Scanner *scanner, const char *buffer,
 }
 // Called once when language is set on a parser.
 // Allocates memory for storing scanner state.
-void *tree_sitter_wesl_external_scanner_create() {
+void *tree_sitter_mew_external_scanner_create() {
   Scanner *scanner = (Scanner *)calloc(1, sizeof(Scanner));
   return scanner;
 }
 
 // Called once parser is deleted or different language set.
 // Frees memory storing scanner state.
-void tree_sitter_wesl_external_scanner_destroy(void *payload) {
+void tree_sitter_mew_external_scanner_destroy(void *payload) {
   Scanner *scanner = (Scanner *)payload;
   free(scanner);
 }
 
 // Called whenever this scanner recognizes a token.
 // Serializes scanner state into buffer.
-unsigned tree_sitter_wesl_external_scanner_serialize(void *payload,
+unsigned tree_sitter_mew_external_scanner_serialize(void *payload,
                                                      char *buffer) {
   Scanner *scanner = (Scanner *)payload;
   return scanner_serialize(scanner, buffer);
@@ -1147,7 +1147,7 @@ unsigned tree_sitter_wesl_external_scanner_serialize(void *payload,
 
 // Called when handling edits and ambiguities.
 // Deserializes scanner state from buffer.
-void tree_sitter_wesl_external_scanner_deserialize(void *payload,
+void tree_sitter_mew_external_scanner_deserialize(void *payload,
                                                    const char *buffer,
                                                    unsigned length) {
   Scanner *scanner = (Scanner *)payload;
@@ -1155,12 +1155,12 @@ void tree_sitter_wesl_external_scanner_deserialize(void *payload,
 }
 
 // Scans for tokens.
-bool tree_sitter_wesl_external_scanner_scan(void *payload, TSLexer *lexer,
+bool tree_sitter_mew_external_scanner_scan(void *payload, TSLexer *lexer,
                                             const bool *valid_symbols) {
   Scanner *scanner = (Scanner *)payload;
   if (scanner_scan(scanner, lexer, valid_symbols)) {
     LOG("scan returned: %s",
-        tree_sitter_wesl_str((enum Token)lexer->result_symbol, false));
+        tree_sitter_mew_str((enum Token)lexer->result_symbol, false));
     return true;
   }
   return false;

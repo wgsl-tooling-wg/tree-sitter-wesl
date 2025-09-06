@@ -1,38 +1,43 @@
 {
+  "$schema": "https://tree-sitter.github.io/tree-sitter/assets/schemas/config.schema.json",
   "grammars": [
     {
-      "name": "wesl",
-      "camelcase": "Wesl",
-      "scope": "source.wesl",
-      "path": ".",
-      "file-types": [
-        "wgsl",
-        "wesl"
-      ],
+      "name": "mew",
+      "camelcase": "Mew",
+      "title": "MEW",
+      "scope": "source.mew",
+      "file-types": ["imew", "mew", "wgsl"],
       "highlights": "queries/highlights.scm",
-      "injection-regex": "^w[ge]sl$"
+      "injection-regex": "^(mew|wgsl|imew)$",
+      "class-name": "TreeSitterMew"
     }
   ],
   "metadata": {
     "version": "1.0.0",
     "license": "MIT",
-    "description": "WESL (WGSL Extended) grammar for tree-sitter",
+    "description": "Modular Extensions to WGSL (MEW) grammar to tree-sitter",
     "authors": [
+      {
+        "name": "Natalie Cuthbert",
+        "email": "natalie@cuthbert.co.za",
+        "url": "https://github.com/ncthbrt"
+      },
       {
         "name": "Mathis Brossier",
         "email": "mathis.brossier@gmail.com"
       }
     ],
     "links": {
-      "repository": "https://wgsl-tooling-wg/tree-sitter-wesl"
+      "repository": "https://github.com/ncthbrt/tree-sitter-mew"
     }
   },
   "bindings": {
     "c": true,
-    "go": true,
-    "node": true,
-    "python": true,
+    "go": false,
+    "node": false,
+    "python": false,
     "rust": true,
-    "swift": true
+    "swift": false,
+    "zig": false
   }
 }
