@@ -37,7 +37,8 @@ enum Token {
   GREATER_THAN_EQUAL, // '>='
   SHIFT_RIGHT,        // '>>'
   SHIFT_RIGHT_ASSIGN, // '>>='
-
+  SINGLE_COLON,       // :
+  DOUBLE_COLON,       // ::
   // A sentinel value used to signal an error has occurred already.
   // https://tree-sitter.github.io/tree-sitter/creating-parsers#other-external-scanner-details
   ERROR,
@@ -69,6 +70,10 @@ static const char *tree_sitter_mew_str(enum Token tok, bool brief) {
     return brief ? ">>" : "SHIFT_RIGHT";
   case SHIFT_RIGHT_ASSIGN:
     return brief ? ">>=" : "SHIFT_RIGHT_ASSIGN";
+  case SINGLE_COLON:
+    return brief ? ":" : "SINGLE_COLON";
+  case DOUBLE_COLON:
+    return brief ? "::" : "DOUBLE_COLON";
   case ERROR:
     return "ERROR";
   default:
@@ -85,7 +90,7 @@ typedef struct {
   CodePoint last;  // Last code point in the interval (inclusive)
 } CodePointRange;
 
-static  bool code_point_less_than(CodePoint code_point, CodePointRange range) {
+static bool code_point_less_than(CodePoint code_point, CodePointRange range) {
   return code_point < range.first;
 }
 static bool range_less_than(CodePointRange range, CodePoint code_point) {
@@ -94,7 +99,7 @@ static bool range_less_than(CodePointRange range, CodePoint code_point) {
 
 /* Implement C++ std::binary_search using C */
 static bool binary_search(const CodePointRange *ranges, size_t num_ranges,
-                   CodePoint code_point) {
+                          CodePoint code_point) {
   size_t left = 0;
   size_t right = num_ranges;
 
@@ -586,7 +591,9 @@ typedef struct {
 static void lexer_init(Lexer *lexer, TSLexer *l) { lexer->lexer = l; }
 
 /// Advances the lexer by one code point.
-static void lexer_advance(Lexer *lexer) { lexer->lexer->advance(lexer->lexer, false); }
+static void lexer_advance(Lexer *lexer) {
+  lexer->lexer->advance(lexer->lexer, false);
+}
 
 /// Returns the next code point, advancing the lexer by one code point.
 static CodePoint lexer_next(Lexer *lexer) {
@@ -617,7 +624,7 @@ static bool lexer_match(Lexer *lexer, CodePoint code_point) {
 /// @note if the code point was found, then the lexer is advanced to that code
 /// point.
 static bool lexer_match_anyof(Lexer *lexer, const CodePoint *code_points,
-                       size_t count) {
+                              size_t count) {
   for (size_t i = 0; i < count; i++) {
     if (lexer_match(lexer, code_points[i])) {
       return true;
@@ -656,6 +663,22 @@ static bool lexer_match_identifier(Lexer *lexer) {
   }
 
   return true;
+}
+/// Attempts to match the :: operator
+// Will advance the lexer by the returned number of colons
+static int lexer_count_0_1_2_colon(Lexer *lexer) {
+  CodePoint possible_colon = lexer_peek(lexer);
+  CodePoint colon_codepoint = 0x3A;
+  if (possible_colon != colon_codepoint) {
+    return 0;
+  }
+  lexer_advance(lexer);
+  CodePoint possible_next_colon = lexer_peek(lexer);
+  if (possible_next_colon != colon_codepoint) {
+    return 1;
+  }
+  lexer_advance(lexer);
+  return 2;
 }
 
 /// Attempts to match a /* block comment */
@@ -824,6 +847,11 @@ static void classify_template_args(Scanner *scanner, Lexer *lexer) {
       continue;
     }
 
+    if (lexer_match(lexer, ':')) {
+      LOG("classify_template_args() ':'");
+      continue;
+    }
+
     // Each '<' must be recorded in the lt_is_tmpl queue.
     // Each '>' must be recorded in the gt_is_tmpl queue.
 
@@ -961,7 +989,7 @@ static char *valids(const bool *const valid_symbols) {
 /// false if the token should be taken from the regular MEW tree-sitter
 /// grammar.
 static bool scanner_scan(Scanner *scanner, TSLexer *ts_lexer,
-                  const bool *const valid_symbols) {
+                         const bool *const valid_symbols) {
   Lexer lexer;
   lexer_init(&lexer, ts_lexer);
 
@@ -971,6 +999,20 @@ static bool scanner_scan(Scanner *scanner, TSLexer *ts_lexer,
   if (valid_symbols[ERROR]) {
     ts_lexer->result_symbol = ERROR;
     return true;
+  }
+
+  if (valid_symbols[SINGLE_COLON] || valid_symbols[DOUBLE_COLON]) {
+    int count = lexer_count_0_1_2_colon(&lexer);
+    switch (count) {
+    case 1:
+      ts_lexer->result_symbol = SINGLE_COLON;
+      return true;
+    case 2:
+      ts_lexer->result_symbol = DOUBLE_COLON;
+      return true;
+    default:; // NO-OP
+      break;
+    }
   }
 
   if (valid_symbols[DISAMBIGUATE_TEMPLATE]) {
@@ -1103,7 +1145,7 @@ static unsigned scanner_serialize(Scanner *scanner, char *buffer) {
 
 /// Deserializes the scanner state from @p buffer.
 static void scanner_deserialize(Scanner *scanner, const char *buffer,
-                         unsigned length) {
+                                unsigned length) {
   if (length == 0) {
     memset(&scanner->state, 0, sizeof(scanner->state));
   } else {
@@ -1140,7 +1182,7 @@ void tree_sitter_mew_external_scanner_destroy(void *payload) {
 // Called whenever this scanner recognizes a token.
 // Serializes scanner state into buffer.
 unsigned tree_sitter_mew_external_scanner_serialize(void *payload,
-                                                     char *buffer) {
+                                                    char *buffer) {
   Scanner *scanner = (Scanner *)payload;
   return scanner_serialize(scanner, buffer);
 }
@@ -1148,15 +1190,15 @@ unsigned tree_sitter_mew_external_scanner_serialize(void *payload,
 // Called when handling edits and ambiguities.
 // Deserializes scanner state from buffer.
 void tree_sitter_mew_external_scanner_deserialize(void *payload,
-                                                   const char *buffer,
-                                                   unsigned length) {
+                                                  const char *buffer,
+                                                  unsigned length) {
   Scanner *scanner = (Scanner *)payload;
   scanner_deserialize(scanner, buffer, length);
 }
 
 // Scans for tokens.
 bool tree_sitter_mew_external_scanner_scan(void *payload, TSLexer *lexer,
-                                            const bool *valid_symbols) {
+                                           const bool *valid_symbols) {
   Scanner *scanner = (Scanner *)payload;
   if (scanner_scan(scanner, lexer, valid_symbols)) {
     LOG("scan returned: %s",

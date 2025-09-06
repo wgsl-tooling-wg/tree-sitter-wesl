@@ -23,6 +23,8 @@ module.exports = grammar({
     $.greater_than_equal,
     $.shift_right,
     $.shift_right_assign,
+    $.single_colon,
+    $.double_colon,
     $._error_sentinel,
   ],
 
@@ -33,19 +35,22 @@ module.exports = grammar({
 
   word: ($) => $.identifier,
 
-  inline: ($) => Object.keys($).filter((x) => x.startsWith("_")),
+  inline: ($) =>
+    Object.keys($).filter(
+      (x) => x !== "_disambiguate_template" && x.startsWith("_"),
+    ),
 
   rules: {
     translation_unit: ($) =>
       seq(
-        field("directives", repeat($._decorated_global_directive)),
-        field("declarations", repeat($._decorated_global_decl)),
+        field("directives", repeat($.global_directive)),
+        field("declarations", repeat($.global_declaration)),
       ),
 
     // BEGIN MEW identifiers
     template_elaborated_ident: ($) =>
       seq(
-        repeat(seq($.template_elaborated_ident_part, "::")),
+        repeat(seq($.template_elaborated_ident_part, $.double_colon)),
         $.template_elaborated_ident_part,
       ),
     template_elaborated_ident_part: ($) =>
@@ -58,23 +63,30 @@ module.exports = grammar({
       seq(
         "with",
         "{",
-        field("directives", repeat($._decorated_module_directives)),
-        field("declarations", repeat($._decorated_module_declarations)),
+        repeat($.module_directive),
+        repeat($.module_member_declaration),
         "}",
       ),
     // END MEW identifiers
 
     // BEGIN MEW imports and extends
-    import_directive: ($) => seq("import", $.root_import_path),
+    import_directive: ($) =>
+      seq(repeat($.attribute), "import", $.root_import_path),
     root_import_path: ($) =>
       choice(
         seq(
-          field("path", repeat(seq($.template_elaborated_ident_part, "::"))),
+          field(
+            "path",
+            repeat(seq($.template_elaborated_ident_part, $.double_colon)),
+          ),
           field("item", $.item_import),
           ";",
         ),
         seq(
-          field("path", repeat1(seq($.template_elaborated_ident_part, "::"))),
+          field(
+            "path",
+            repeat1(seq($.template_elaborated_ident_part, $.double_colon)),
+          ),
           field("collection", $.import_collection),
         ),
       ),
@@ -86,22 +98,18 @@ module.exports = grammar({
         optional($.inline_module),
         field("rename", optional(seq("as", $.identifier))),
       ),
-    import_collection: ($) =>
-      seq(
-        "{",
-        field("items", comma($.import_path, { trail: true, opt: true })),
-        "}",
-      ),
+    import_collection: ($) => seq("{", comma($.import_path), "}"),
     import_path: ($) =>
       choice(
         seq(
-          repeat1(seq($.template_elaborated_ident_part, "::")),
+          repeat1(seq($.template_elaborated_ident_part, $.double_colon)),
           $._import_content,
         ),
         $.item_import,
       ),
     _import_content: ($) => choice($.import_collection, $.item_import),
-    extend_directive: ($) => seq("extend", $.template_elaborated_ident, ";"),
+    extend_directive: ($) =>
+      seq(repeat($.attribute), "extend", $.template_elaborated_ident, ";"),
     // END MEW imports
 
     // literals
@@ -152,11 +160,11 @@ module.exports = grammar({
       ),
     _template_parameter_comma_list: ($) =>
       choice(
+        comma1($._template_parameter),
         seq(
-          comma($._template_parameter, { trail: true, opt: true }),
-          comma($._optional_template_parameter, { trail: true, opt: false }),
+          comma($._template_parameter),
+          comma1($._optional_template_parameter),
         ),
-        comma($._template_parameter, { trail: true, opt: false }),
       ),
     _template_parameter: ($) => field("name", $._ident),
 
@@ -165,20 +173,8 @@ module.exports = grammar({
     // END MEW template params
     _template_arg_comma_list: ($) =>
       choice(
-        field(
-          "args",
-          comma($._template_arg_expression, { trail: true, opt: false }),
-        ),
-        seq(
-          field(
-            "args",
-            comma($._template_arg_expression, { trail: false, opt: true }),
-          ),
-          field(
-            "named_args",
-            comma($._named_template_arg, { trail: true, opt: false }),
-          ),
-        ),
+        comma1($._template_arg_expression),
+        seq(comma($._template_arg_expression), comma1($._named_template_arg)),
       ),
     _named_template_arg: ($) =>
       seq(
@@ -189,8 +185,6 @@ module.exports = grammar({
     _template_arg_expression: ($) => field("expression", $._expression),
 
     // directives
-    _decorated_global_directive: ($) =>
-      seq(repeat($.attribute), $.global_directive),
     global_directive: ($) =>
       choice(
         $.diagnostic_directive,
@@ -202,13 +196,10 @@ module.exports = grammar({
         // END MEW Directives
       ),
     // BEGIN MEW Directives
-    _decorated_module_directives: ($) =>
-      seq(repeat($.attribute), $.module_directive),
     module_directive: ($) => choice($.import_directive, $.extend_directive),
-    compound_directive: ($) => $.import_directive,
-    _decorated_compound_directive: ($) =>
-      seq(repeat($.attribute), $.compound_directive),
-    diagnostic_directive: ($) => seq("diagnostic", $._diagnostic_control, ";"),
+    compound_directive: ($) => choice($.import_directive),
+    diagnostic_directive: ($) =>
+      seq(repeat($.attribute), "diagnostic", $._diagnostic_control, ";"),
     _diagnostic_control: ($) =>
       seq(
         "(",
@@ -225,13 +216,13 @@ module.exports = grammar({
       ),
     _diagnostic_name_token: ($) => $._ident_pattern_token,
     _severity_control_name: ($) => $._ident_pattern_token,
-    enable_directive: ($) => seq("enable", $._enable_extension_list, ";"),
-    _enable_extension_list: ($) =>
-      comma($._enable_extension_name, { trail: true, opt: false }),
+    enable_directive: ($) =>
+      seq(repeat($.attribute), "enable", $._enable_extension_list, ";"),
+    _enable_extension_list: ($) => comma1($._enable_extension_name),
     _enable_extension_name: ($) => $._ident_pattern_token,
-    requires_directive: ($) => seq("requires", $._software_extension_list, ";"),
-    _software_extension_list: ($) =>
-      comma($._software_extension_name, { trail: true, opt: false }),
+    requires_directive: ($) =>
+      seq(repeat($.attribute), "requires", $._software_extension_list, ";"),
+    _software_extension_list: ($) => comma1($._software_extension_name),
     _software_extension_name: ($) => $._ident_pattern_token,
 
     // attributes
@@ -245,8 +236,7 @@ module.exports = grammar({
       ), // precedence: a parenthesis following an attribute is always part of the attribute.
 
     // declarations
-    _decorated_global_decl: ($) => seq(repeat($.attribute), $.global_decl),
-    global_decl: ($) =>
+    global_declaration: ($) =>
       choice(
         ";",
         $.global_variable_decl,
@@ -263,17 +253,20 @@ module.exports = grammar({
     // BEGIN MEW root additions
     module_decl: ($) =>
       seq(
+        repeat($.attribute),
         "module",
         field("name", $._ident),
         optional($.template_parameters),
+        $.module_body,
+      ),
+    module_body: ($) =>
+      seq(
         "{",
-        field("directives", repeat($._decorated_module_directives)),
-        field("declarations", repeat($._decorated_module_declarations)),
+        repeat($.module_directive),
+        repeat($.module_member_declaration),
         "}",
       ),
-    _decorated_module_declarations: ($) =>
-      seq(repeat($.attribute), $.module_declaration),
-    module_declaration: ($) =>
+    module_member_declaration: ($) =>
       choice(
         ";",
         $.module_variable_decl,
@@ -291,24 +284,25 @@ module.exports = grammar({
     // BEGIN MEW struct additions
     struct_decl: ($) =>
       seq(
+        repeat($.attribute),
         "struct",
         field("name", $._ident),
         field("template_parameters", optional($.template_parameters)),
         field("body", $.struct_body),
       ),
     // END MEW struct additions
-    struct_body: ($) =>
-      seq("{", comma($.struct_member, { opt: true, trail: true }), "}"),
+    struct_body: ($) => seq("{", comma($.struct_member), "}"),
     struct_member: ($) =>
       seq(
         repeat($.attribute),
         field("name", $._member_ident),
-        ":",
+        $.single_colon,
         field("type", $.type_specifier),
       ),
     // BEGIN MEW type_alias_decl -> alias_decl
     alias_decl: ($) =>
       seq(
+        repeat($.attribute),
         "alias",
         field("name", $._ident),
         field("template_parameters", optional($.template_parameters)),
@@ -318,30 +312,46 @@ module.exports = grammar({
       ),
     // END MEW alias_decl
     // variables and values
-    global_variable_decl: ($) => seq($.variable_decl, ";"),
+
     // BEGIN MEW variable decl
-    module_variable_decl: ($) => seq($.variable_decl, ";"),
+    global_variable_decl: ($) => seq($.variable_decl_with_intializer, ";"),
+    module_variable_decl: ($) => seq($.variable_decl_with_intializer, ";"),
+    variable_decl_with_intializer: ($) =>
+      seq(
+        repeat($.attribute),
+        $.variable_decl,
+        field("initializer", optional(seq("=", $._expression))),
+      ),
     variable_decl: ($) =>
       seq(
         "var",
         $._disambiguate_template,
         field("template_args", optional($.template_list)),
         $.optionally_typed_ident,
-        field("initializer", optional(seq("=", $._expression))),
       ),
     // END MEW variable decl
     global_value_decl: ($) =>
       choice(
-        $.const_value_decl,
+        $.const_decl,
         seq(
+          repeat($.attribute),
           "override",
           $.optionally_typed_ident,
           field("initializer", optional(seq("=", $._expression))),
           ";",
         ),
       ),
+    const_decl: ($) =>
+      seq(
+        repeat($.attribute),
+        "const",
+        $.optionally_typed_ident,
+        "=",
+        field("initializer", $._expression),
+        ";",
+      ),
     // BEGIN MEW value decl
-    module_value_decl: ($) => $.const_value_decl,
+    module_value_decl: ($) => $.const_decl,
     const_value_decl: ($) =>
       seq(
         "const",
@@ -354,15 +364,14 @@ module.exports = grammar({
     optionally_typed_ident: ($) =>
       seq(
         field("name", $._ident),
-        // field("template_args", optional($.template_list)), //
-        field("type", optional(seq(":", $.type_specifier))),
+        field("type", optional(seq($.single_colon, $.type_specifier))),
       ),
 
     // function calls
     _call_phrase: ($) =>
       seq($.template_elaborated_ident, $._argument_expression_list),
     _argument_expression_list: ($) => seq("(", optional($.argument_list), ")"),
-    argument_list: ($) => comma($._expression, { trail: true, opt: false }), // renamed from spec "expression_comma_list"
+    argument_list: ($) => comma1($._expression), // renamed from spec "expression_comma_list"
 
     // expressions
     _short_circuit_or_expression: ($) =>
@@ -537,11 +546,11 @@ module.exports = grammar({
       ),
 
     // statements
-    _decorated_statement: ($) => seq(repeat($.attribute), $.statement),
+    _decorated_statement: ($) => $.statement,
     statement: ($) =>
       choice(
         ";",
-        seq($.return_statement, ";"),
+        $.return_statement,
         $.if_statement,
         $.switch_statement,
         $.loop_statement,
@@ -559,7 +568,7 @@ module.exports = grammar({
     compound_statement: ($) =>
       seq(
         "{",
-        field("directives", repeat($._decorated_compound_directive)),
+        field("directives", repeat($.compound_directive)),
         field("statements", repeat($._decorated_statement)),
         "}",
       ),
@@ -591,7 +600,8 @@ module.exports = grammar({
       ),
     increment_statement: ($) => seq($._expression, "++"),
     decrement_statement: ($) => seq($._expression, "--"),
-    return_statement: ($) => seq("return", optional($._expression)),
+    return_statement: ($) =>
+      seq(repeat($.attribute), "return", optional($._expression), ";"),
     func_call_statement: ($) => $._call_phrase,
     const_assert_statement: ($) => seq("const_assert", $._expression),
     _variable_updating_statement: ($) =>
@@ -601,7 +611,7 @@ module.exports = grammar({
         $.decrement_statement,
       ),
     variable_or_value_statement: ($) =>
-      choice($.variable_decl, $.const_value_decl, $.let_decl),
+      choice($.variable_decl_with_intializer, $.const_value_decl, $.let_decl),
     let_decl: ($) => seq("let", $.optionally_typed_ident, "=", $._expression),
 
     // if statement
@@ -636,12 +646,16 @@ module.exports = grammar({
       seq(
         "case",
         $._case_selectors,
-        optional(":"),
+        optional($.single_colon),
         field("body", $.compound_statement),
       ),
     default_alone_clause: ($) =>
-      seq("default", optional(":"), field("body", $.compound_statement)),
-    _case_selectors: ($) => comma($.case_selector, { trail: true, opt: false }),
+      seq(
+        "default",
+        optional($.single_colon),
+        field("body", $.compound_statement),
+      ),
+    _case_selectors: ($) => comma1($.case_selector),
     case_selector: ($) => choice("default", $._expression),
 
     // control flow statements
@@ -671,7 +685,7 @@ module.exports = grammar({
           seq(
             field("attributes", repeat($.attribute)),
             "{",
-            field("directives", repeat($._decorated_compound_directive)),
+            field("directives", repeat($.compound_directive)),
             field("statements", repeat($._decorated_statement)),
             field("continuing", optional($._decorated_continuing_statement)),
             "}",
@@ -696,7 +710,7 @@ module.exports = grammar({
       seq(
         "continuing",
         "{",
-        field("directives", repeat($._decorated_compound_directive)),
+        field("directives", repeat($.compound_directive)),
         field("statements", repeat($._decorated_statement)),
         field("break_if", optional($._decorated_break_if_statement)),
         "}",
@@ -707,14 +721,18 @@ module.exports = grammar({
 
     // function declaration
     function_decl: ($) =>
-      seq($.function_header, field("body", $.compound_statement)),
-    function_header: ($) =>
+      seq(
+        repeat($.attribute),
+        $._function_header,
+        field("body", $.compound_statement),
+      ),
+    _function_header: ($) =>
       seq(
         "fn",
         field("name", $._ident),
         field("template_parameters", optional($.template_parameters)),
         "(",
-        field("parameters", optional($.param_list)),
+        field("parameters", comma($.param)),
         ")",
         optional(
           seq(
@@ -724,12 +742,11 @@ module.exports = grammar({
           ),
         ),
       ),
-    param_list: ($) => comma($.param, { trail: true, opt: false }),
     param: ($) =>
       seq(
         repeat($.attribute),
         field("name", $._ident),
-        ":",
+        $.single_colon,
         field("type", $.type_specifier),
       ),
     // extras
@@ -740,9 +757,24 @@ module.exports = grammar({
   },
 });
 
-function comma(rule, { opt, trail } = { opt: false, trail: false }) {
-  const res = trail
-    ? seq(rule, repeat(seq(",", rule)), optional(","))
-    : seq(rule, repeat(seq(",", rule)));
-  return opt ? optional(res) : res;
+/**
+ * @param {RuleOrLiteral} rule
+ * @param {boolean=} allowTrailing whether to allow trailing commas, defaults to true
+ * @returns {RuleOrLiteral}
+ */
+function comma(rule, allowTrailing) {
+  return optional(comma1(rule, allowTrailing));
+}
+
+/**
+ * @param {RuleOrLiteral} rule
+ * @param {boolean=} allowTrailing allow trailing commas, defaults to true
+ * @returns RuleOrLiteral
+ */
+function comma1(rule, allowTrailing) {
+  if (!!(allowTrailing ?? true)) {
+    return seq(rule, repeat(seq(",", rule)), optional(","));
+  } else {
+    return seq(rule, repeat(seq(",", rule)), optional(","));
+  }
 }

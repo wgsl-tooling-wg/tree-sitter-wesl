@@ -4,8 +4,9 @@
 (struct_decl
   body: (_) @class.inside) @class.around
 
-(param_list
-  ((_) @parameter.inside . ","? @parameter.around) @parameter.around)
+(function_decl
+    template_parameters: ((_) @parameter.inside . ","? @parameter.around)
+  parameters: ((_) @parameter.inside . ","? @parameter.around) @parameter.around)
 
 (argument_list
   ((_) @parameter.inside . ","? @parameter.around) @parameter.around)

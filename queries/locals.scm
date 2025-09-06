@@ -1,10 +1,10 @@
 ; Scopes
 
 [
-  (global_decl)
+  (global_declaration)
+  (module_body)
   (switch_body)
   (compound_statement)
-  (module_decl)
 ] @local.scope
 
 ; References

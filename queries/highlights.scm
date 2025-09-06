@@ -42,8 +42,7 @@
 ; functions
 
 (function_decl
-  (function_header
-    (identifier) @function))
+    name: (identifier)  @function)
 
 (call_expression
   (template_elaborated_ident (_) . (template_elaborated_ident_part (identifier))) @function)
@@ -127,4 +126,4 @@
 ; punctuation
 
 [ "(" ")" "[" "]" "{" "}" ] @punctuation.bracket
-[ "," "." ":" ";" ] @punctuation.delimiter
+[ "," "." (double_colon) (single_colon) ";" ] @punctuation.delimiter
