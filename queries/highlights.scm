@@ -105,6 +105,7 @@
   "continuing"
   "return"
   "discard"
+  "const_assert"
 ] @keyword.control
 
 [ ; WESL import extension
