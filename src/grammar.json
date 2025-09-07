@@ -917,12 +917,8 @@
       ]
     },
     "template_arg_expression": {
-      "type": "FIELD",
-      "name": "expression",
-      "content": {
-        "type": "SYMBOL",
-        "name": "_expression"
-      }
+      "type": "SYMBOL",
+      "name": "_expression"
     },
     "global_directive": {
       "type": "CHOICE",

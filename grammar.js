@@ -35,10 +35,7 @@ module.exports = grammar({
 
   word: ($) => $.identifier,
 
-  inline: ($) =>
-    Object.keys($).filter(
-      (x) => x !== "_disambiguate_template" && x.startsWith("_"),
-    ),
+  inline: ($) => [],
 
   rules: {
     translation_unit: ($) =>
@@ -182,7 +179,7 @@ module.exports = grammar({
         "=",
         field("value", $.template_arg_expression),
       ),
-    template_arg_expression: ($) => field("expression", $._expression),
+    template_arg_expression: ($) => $._expression,
 
     // directives
     global_directive: ($) =>
