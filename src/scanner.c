@@ -85,7 +85,7 @@ typedef struct {
   CodePoint last;  // Last code point in the interval (inclusive)
 } CodePointRange;
 
-static  bool code_point_less_than(CodePoint code_point, CodePointRange range) {
+static bool code_point_less_than(CodePoint code_point, CodePointRange range) {
   return code_point < range.first;
 }
 static bool range_less_than(CodePointRange range, CodePoint code_point) {
@@ -94,7 +94,7 @@ static bool range_less_than(CodePointRange range, CodePoint code_point) {
 
 /* Implement C++ std::binary_search using C */
 static bool binary_search(const CodePointRange *ranges, size_t num_ranges,
-                   CodePoint code_point) {
+                          CodePoint code_point) {
   size_t left = 0;
   size_t right = num_ranges;
 
@@ -586,7 +586,9 @@ typedef struct {
 static void lexer_init(Lexer *lexer, TSLexer *l) { lexer->lexer = l; }
 
 /// Advances the lexer by one code point.
-static void lexer_advance(Lexer *lexer) { lexer->lexer->advance(lexer->lexer, false); }
+static void lexer_advance(Lexer *lexer) {
+  lexer->lexer->advance(lexer->lexer, false);
+}
 
 /// Returns the next code point, advancing the lexer by one code point.
 static CodePoint lexer_next(Lexer *lexer) {
@@ -613,11 +615,18 @@ static bool lexer_match(Lexer *lexer, CodePoint code_point) {
   return false;
 }
 
+/// Advances the lexer while the next code point is considered blankspace
+static void lexer_skip_blankspace(Lexer *lexer) {
+  while (is_space(lexer_peek(lexer))) {
+    lexer->lexer->advance(lexer->lexer, true);
+  }
+}
+
 /// @return true if the next code point is found in @p code_points.
 /// @note if the code point was found, then the lexer is advanced to that code
 /// point.
 static bool lexer_match_anyof(Lexer *lexer, const CodePoint *code_points,
-                       size_t count) {
+                              size_t count) {
   for (size_t i = 0; i < count; i++) {
     if (lexer_match(lexer, code_points[i])) {
       return true;
@@ -628,6 +637,8 @@ static bool lexer_match_anyof(Lexer *lexer, const CodePoint *code_points,
 
 /// Attempts to match an identifier pattern that starts with XIDStart followed
 /// by any number of XIDContinue code points.
+// 
+// WESL adds `fully::qualified::idents`. We consider them to be part of the ident here.
 static bool lexer_match_identifier(Lexer *lexer) {
   if (!is_xid_start(lexer_peek(lexer))) {
     return false;
@@ -640,6 +651,10 @@ static bool lexer_match_identifier(Lexer *lexer) {
   }
 
   while (true) {
+    lexer_skip_blankspace(lexer);
+    if (lexer_match(lexer, ':') && lexer_match(lexer, ':')) {
+      lexer_skip_blankspace(lexer);
+    }
     if (!is_xid_continue(lexer_peek(lexer))) {
       break;
     }
@@ -679,13 +694,6 @@ static bool lexer_match_block_comment(Lexer *lexer) {
     }
   }
   return true;
-}
-
-/// Advances the lexer while the next code point is considered blankspace
-static void lexer_skip_blankspace(Lexer *lexer) {
-  while (is_space(lexer_peek(lexer))) {
-    lexer->lexer->advance(lexer->lexer, true);
-  }
 }
 
 typedef struct {
@@ -961,7 +969,7 @@ static char *valids(const bool *const valid_symbols) {
 /// false if the token should be taken from the regular wesl tree-sitter
 /// grammar.
 static bool scanner_scan(Scanner *scanner, TSLexer *ts_lexer,
-                  const bool *const valid_symbols) {
+                         const bool *const valid_symbols) {
   Lexer lexer;
   lexer_init(&lexer, ts_lexer);
 
@@ -1103,7 +1111,7 @@ static unsigned scanner_serialize(Scanner *scanner, char *buffer) {
 
 /// Deserializes the scanner state from @p buffer.
 static void scanner_deserialize(Scanner *scanner, const char *buffer,
-                         unsigned length) {
+                                unsigned length) {
   if (length == 0) {
     memset(&scanner->state, 0, sizeof(scanner->state));
   } else {
