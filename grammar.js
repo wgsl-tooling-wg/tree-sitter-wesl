@@ -144,7 +144,7 @@ module.exports = grammar({
         call_expression: $ => prec.left(11, $._call_phrase),
         indexing_expression: $ => prec.left(11, seq(field('value', $._expression), '[', field('index', $._expression), ']')),
         named_component_expression: $ => prec.left(11, seq(field('value', $._expression), '.', field('component', choice($._member_ident, $.swizzle_name)))),
-        swizzle_name: $ => choice(/[rgba]/, /[rgba][rgba]/, /[rgba][rgba][rgba]/, /[rgba][rgba][rgba][rgba]/, /[xyzw]/, /[xyzw][xyzw]/, /[xyzw][xyzw][xyzw]/, /[xyzw][xyzw][xyzw][xyzw]/),
+        swizzle_name: $ => choice(/[rgba]{1,4}/, /[xyzw]{1,4}/),
         paren_expression: $ => prec.left(12, seq('(', $._expression, ')')),
 
         binary_expression: $ => choice(
