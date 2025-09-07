@@ -8,10 +8,10 @@
 (identifier) @variable
 
 (param
-  (identifier) @variable.parameter)
+  name: (_) @variable.parameter)
 
 (struct_decl
-  (identifier) @type)
+  name: (_) @type)
 
 (struct_member
   name: (_) @variable.other.member)
@@ -128,7 +128,7 @@
 
 [
   "-" "!" "~" "*" "&" ; unary
-  "^" "|" "/" "%" "+" (shift_left) (shift_right) ; binary
+  "^" "|" "/" "%" "+" "&&" "||" (shift_left) (shift_right) ; binary
   (less_than) (greater_than) (less_than_equal) (greater_than_equal) "==" "!=" ; relational
   "+=" "-=" "*=" "/=" "%=" "|=" "^=" "++" "--" "=" ; assign
   "->" ; return
@@ -137,7 +137,7 @@
 ; punctuation
 
 [ "(" ")" "[" "]" "{" "}" ] @punctuation.bracket
-[ "," "." ":" ";" ] @punctuation.delimiter
+[ "," "." ":" "::" ";" ] @punctuation.delimiter
 
 ; preprocessor
 
