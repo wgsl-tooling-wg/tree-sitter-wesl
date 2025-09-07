@@ -43,10 +43,11 @@ module.exports = grammar({
 
         // imports
         import_statement: $ => seq(repeat($.attribute), 'import', optional($.import_path), $._import_content, ';'),
-        import_path: $ => seq(optional($.import_path), $._ident_pattern_token, '::'), // XXX: how to make this not recursive? couldn't get it to work with repeat1(seq($._ident_pattern_token, '::'))
+        import_path: $ => seq(optional($.import_path), $.identifier, '::'), // XXX: how to make this not recursive? couldn't get it to work with repeat1(seq($.identifier, '::'))
+        // import_path: $ => repeat1(seq($.identifier, '::')),
         import: $ => choice(seq($.import_path, $.import_item), seq($.import_path, $.import_collection), $.import_item),
         _import_content: $ => choice($.import_item, $.import_collection),
-        import_item: $ => seq(field('name', $._ident_pattern_token), optional(seq('as', field('rename', $._ident_pattern_token)))),
+        import_item: $ => seq(field('name', $.identifier), optional(seq('as', field('rename', $.identifier)))),
         import_collection: $ => seq('{', comma($.import, { trail: true }), '}'),
 
         // literals
@@ -60,11 +61,10 @@ module.exports = grammar({
         _hex_float_literal: $ => choice(/0[xX][0-9a-fA-F]*\.[0-9a-fA-F]+([pP][+-]?[0-9]+[fh]?)?/, /0[xX][0-9a-fA-F]+\.[0-9a-fA-F]*([pP][+-]?[0-9]+[fh]?)?/, /0[xX][0-9a-fA-F]+[pP][+-]?[0-9]+[fh]?/),
 
         // idents
-        _ident: $ => seq($._ident_pattern_token, $._disambiguate_template),
-        _member_ident: $ => $._ident_pattern_token,
+        _ident: $ => seq($.identifier, $._disambiguate_template),
+        _member_ident: $ => $.identifier,
         _template_elaborated_ident: $ => seq(optional($.ident_path), $._ident, optional($.template_list)), // import_path is a WESL extension: qualified identifiers
         ident_path: $ => seq(optional($.ident_path), $._ident, '::'),
-        _ident_pattern_token: $ => $.identifier,
         identifier: $ => /([_\p{XID_Start}][\p{XID_Continue}]+)|([\p{XID_Start}])/u, // 'identifier' is tree-sitter's standard name so we output that instead of 'ident_pattern_token'
         type_specifier: $ => $._template_elaborated_ident,
 
@@ -79,17 +79,17 @@ module.exports = grammar({
         diagnostic_directive: $ => seq('diagnostic', $._diagnostic_control, ';'),
         _diagnostic_control: $ => seq('(', field('severity', $._severity_control_name), ',', field('rule', $._diagnostic_rule_name), optional(','), ')'),
         _diagnostic_rule_name: $ => choice($._diagnostic_name_token, seq($._diagnostic_name_token, '.', $._diagnostic_name_token)),
-        _diagnostic_name_token: $ => $._ident_pattern_token,
-        _severity_control_name: $ => $._ident_pattern_token,
+        _diagnostic_name_token: $ => $.identifier,
+        _severity_control_name: $ => $.identifier,
         enable_directive: $ => seq('enable', $._enable_extension_list, ';'),
         _enable_extension_list: $ => comma($._enable_extension_name, { trail: true }),
-        _enable_extension_name: $ => $._ident_pattern_token,
+        _enable_extension_name: $ => $.identifier,
         requires_directive: $ => seq('requires', $._software_extension_list, ';'),
         _software_extension_list: $ => comma($._software_extension_name, { trail: true }),
-        _software_extension_name: $ => $._ident_pattern_token,
+        _software_extension_name: $ => $.identifier,
 
         // attributes
-        attribute: $ => prec.right(seq('@', field('name', $._ident_pattern_token), field('arguments', optional($._argument_expression_list)))), // precedence: a parenthesis following an attribute is always part of the attribute.
+        attribute: $ => prec.right(seq('@', field('name', $.identifier), field('arguments', optional($._argument_expression_list)))), // precedence: a parenthesis following an attribute is always part of the attribute.
 
         // declarations
         _decorated_global_decl: $ => seq(repeat($.attribute), $.global_decl),
