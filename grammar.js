@@ -191,10 +191,7 @@ module.exports = grammar({
             seq($.break_if_statement, ';'),
         ),
         compound_statement: $ => seq(repeat($.attribute), '{', repeat($._decorated_statement), '}'),
-        assignment_statement: $ => choice(
-            seq(field('left', $._expression), field('operator', choice('=', $._compound_assignment_operator)), field('right', $._expression)),
-            seq(field('left', '_'), field('operator', '='), field('right', $._expression))
-        ),
+        assignment_statement: $ => seq(field('left', $._expression), field('operator', choice('=', $._compound_assignment_operator)), field('right', $._expression)),
         _compound_assignment_operator: $ => choice('+=', '-=', '*=', '/=', '%=', '&=', '|=', '^=', $.shift_right_assign, $.shift_left_assign),
         increment_statement: $ => seq($._expression, '++'),
         decrement_statement: $ => seq($._expression, '--'),
