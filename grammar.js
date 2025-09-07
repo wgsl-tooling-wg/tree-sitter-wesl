@@ -253,12 +253,12 @@ module.exports = grammar({
         preproc_custom: $ => seq(
           field('directive', $.preproc_directive),
           field('argument', repeat($._expression)),
+          optional(';'),
           token.immediate(/\r?\n/),
         ),
         preproc_directive: _ => /#[ \t]*[a-zA-Z0-9]\w*/,
         preproc_argument: _ => token(prec(-1, /\S([^/\n]|\/[^*]|\\\r?\n)*/)),
-
-        preproc_bevy_import: $ => seq('#import', choice(seq($.import_path, $._import_content), $.import_item)),
+        preproc_bevy_import: $ => prec.right(seq('#import', choice(seq($.import_path, $._import_content), $.import_item), optional(';'))), // notice prec.right: we swallow here what would otherwise be a ';' statement.
 
         // extras
 
