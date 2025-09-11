@@ -88,41 +88,31 @@
 (hex_int_literal) @constant.numeric.integer
 (float_literal) @constant.numeric.float
 
-
 ; keywords
 
 [
-  "if"
-  "else"
-  "loop"
-  "for"
-  "while"
+  "alias"
+  "virtual" ; Bevy / naga_oil extension
+] @keyword
+
+[
   "switch"
   "case"
   "default"
   "break"
   "continue"
   "continuing"
-  "return"
   "discard"
   "const_assert"
 ] @keyword.control
 
-[ ; WESL import extension
-  "import"
-  "as"
-] @keyword.control.import
-
-[
-  "var"
-  "let"
-  "const"
-  "fn"
-  "struct"
-  "alias"
-  "virtual" ; Bevy / naga_oil extension
-  "override" ; Bevy / naga_oil extension
-] @keyword
+[ "fn" ] @keyword.control.function
+[ "if" "else" ] @keyword.control.conditional
+[ "loop" "for" "while" ] @keyword.control.repeat
+[ "return" ] @keyword.control.return
+[ "var" "let" "const" "override" "struct" ] @keyword.storage.type
+[ "diagnostic" "enable" "requires" ] @keyword.directive
+[ "import" "as" ] @keyword.control.import ; WESL import extension
 
 ; expressions
 
@@ -142,3 +132,38 @@
 ; preprocessor
 
 [ (preproc_directive) "#import" ] @keyword.directive
+
+; reserved (except "as" and "import")
+; it's debated whether we should highlight them.
+
+; [
+;   "NULL" "Self" "abstract" "active" "alignas"
+;   "alignof" "asm" "asm_fragment" "async" "attribute"
+;   "auto" "await" "become" "cast" "catch"
+;   "class" "co_await" "co_return" "co_yield" "coherent"
+;   "column_major" "common" "compile" "compile_fragment" "concept"
+;   "const_cast" "consteval" "constexpr" "constinit" "crate"
+;   "debugger" "decltype" "delete" "demote" "demote_to_helper"
+;   "do" "dynamic_cast" "enum" "explicit" "export"
+;   "extends" "extern" "external" "fallthrough" "filter"
+;   "final" "finally" "friend" "from" "fxgroup"
+;   "get" "goto" "groupshared" "highp" "impl"
+;   "implements" "inline" "instanceof" "interface"
+;   "layout" "lowp" "macro" "macro_rules" "match"
+;   "mediump" "meta" "mod" "module" "move"
+;   "mut" "mutable" "namespace" "new" "nil"
+;   "noexcept" "noinline" "nointerpolation" "non_coherent" "noncoherent"
+;   "noperspective" "null" "nullptr" "of" "operator"
+;   "package" "packoffset" "partition" "pass" "patch"
+;   "pixelfragment" "precise" "precision" "premerge" "priv"
+;   "protected" "pub" "public" "readonly" "ref"
+;   "regardless" "register" "reinterpret_cast" "require" "resource"
+;   "restrict" "self" "set" "shared" "sizeof"
+;   "smooth" "snorm" "static" "static_assert" "static_cast"
+;   "std" "subroutine" "super" "target" "template"
+;   "this" "thread_local" "throw" "trait" "try"
+;   "type" "typedef" "typeid" "typename" "typeof"
+;   "union" "unless" "unorm" "unsafe" "unsized"
+;   "use" "using" "varying" "virtual" "volatile"
+;   "wgsl" "where" "with" "writeonly" "yield" 
+; ] @keyword
