@@ -39,7 +39,7 @@ module.exports = grammar({
     inline: $ => [],
 
     rules: {
-        translation_unit: $ => seq(repeat(choice($.import_statement, $.preproc_bevy_import)), repeat($._decorated_global_directive), repeat($._decorated_global_decl)),
+        translation_unit: $ => seq(repeat(choice($.import_statement, $.preproc_bevy_import, $._decorated_global_directive, $._decorated_global_decl))),
 
         // imports
         import_statement: $ => seq(repeat($.attribute), 'import', optional($.import_path), $._import_content, ';'),

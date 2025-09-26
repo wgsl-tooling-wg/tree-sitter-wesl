@@ -18,22 +18,16 @@
               {
                 "type": "SYMBOL",
                 "name": "preproc_bevy_import"
+              },
+              {
+                "type": "SYMBOL",
+                "name": "_decorated_global_directive"
+              },
+              {
+                "type": "SYMBOL",
+                "name": "_decorated_global_decl"
               }
             ]
-          }
-        },
-        {
-          "type": "REPEAT",
-          "content": {
-            "type": "SYMBOL",
-            "name": "_decorated_global_directive"
-          }
-        },
-        {
-          "type": "REPEAT",
-          "content": {
-            "type": "SYMBOL",
-            "name": "_decorated_global_decl"
           }
         }
       ]
