@@ -49,7 +49,7 @@
     (identifier) @function))
 
 (call_expression
-  (identifier) @function)
+  (identifier) @function.call)
 
 (func_call_statement
   (identifier) @function)
@@ -76,10 +76,10 @@
   (identifier) @attribute) @attribute
 
 (attribute
-  (identifier) @attr-name
+  (identifier) @attribute
   (argument_list
     (identifier) @variable.builtin)
-  (#eq? @attr-name "builtin"))
+  (#eq? @attribute "builtin"))
 
 ; literals
 
